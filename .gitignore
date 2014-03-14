@@ -1,0 +1,7 @@
+*.o
+*.plist
+*.pro
+compile.sh
+Makefile
+Maritime.app
+Maritime.pbproj
