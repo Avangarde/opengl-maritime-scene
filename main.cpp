@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 	Viewer viewer;
 
 	// build your scene here
-    //    viewer.addRenderable(new Cube());
+ //    viewer.addRenderable(new Cube());
 
 	viewer.setWindowTitle("viewer");
 	// Make the viewer window visible on screen.

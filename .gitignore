@@ -8,5 +8,6 @@ Makefile
 maritime
 Maritime.app
 Maritime.pbproj
+nbproject/
 .qglviewer.xml
 

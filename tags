@@ -1,0 +1,74 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AR	Makefile	/^AR            = ar cqs$/;"	m
+CC	Makefile	/^CC            = gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT $(DEFINES)$/;"	m
+CHK_DIR_EXISTS	Makefile	/^CHK_DIR_EXISTS= test -d$/;"	m
+COMPRESS	Makefile	/^COMPRESS      = gzip -9f$/;"	m
+COPY	Makefile	/^COPY          = cp -f$/;"	m
+COPY_DIR	Makefile	/^COPY_DIR      = $(COPY) -r$/;"	m
+COPY_FILE	Makefile	/^COPY_FILE     = $(COPY)$/;"	m
+CXX	Makefile	/^CXX           = g++$/;"	m
+CXXFLAGS	Makefile	/^CXXFLAGS      = -m64 -pipe -g -Wall -W -D_REENTRANT $(DEFINES)$/;"	m
+Cube	cube.h	/^class Cube : public Renderable$/;"	c
+DEFINES	Makefile	/^DEFINES       = -DQT_XML_LIB -DQT_OPENGL_LIB -DQT_GUI_LIB -DQT_CORE_LIB$/;"	m
+DEL_DIR	Makefile	/^DEL_DIR       = rmdir$/;"	m
+DEL_FILE	Makefile	/^DEL_FILE      = rm -f$/;"	m
+DESTDIR	Makefile	/^DESTDIR       = $/;"	m
+DIST	Makefile	/^DIST          = \/usr\/lib64\/qt4\/mkspecs\/common\/g++-multilib.conf \\$/;"	m
+INCPATH	Makefile	/^INCPATH       = -I\/usr\/lib64\/qt4\/mkspecs\/linux-g++-64 -I. -I\/usr\/include\/QtCore -I\/usr\/include\/QtGui -I\/usr\/include\/QtOpenGL -I\/usr\/include\/QtXml -I\/usr\/include -I\/usr\/X11R6\/include -I.$/;"	m
+INSTALL_DIR	Makefile	/^INSTALL_DIR   = $(COPY_DIR)$/;"	m
+INSTALL_FILE	Makefile	/^INSTALL_FILE  = install -m 644 -p$/;"	m
+INSTALL_PROGRAM	Makefile	/^INSTALL_PROGRAM = install -m 755 -p$/;"	m
+LFLAGS	Makefile	/^LFLAGS        = -m64$/;"	m
+LIBS	Makefile	/^LIBS          = $(SUBLIBS)  -L\/usr\/X11R6\/lib64 -lglut -lQGLViewer -lGLU -lGL -lQtXml -lQtOpenGL -lQtGui -lQtCore -lpthread $/;"	m
+LINK	Makefile	/^LINK          = g++$/;"	m
+MKDIR	Makefile	/^MKDIR         = mkdir -p$/;"	m
+MOVE	Makefile	/^MOVE          = mv -f$/;"	m
+OBJECTS	Makefile	/^OBJECTS       = cube.o \\$/;"	m
+OBJECTS_DIR	Makefile	/^OBJECTS_DIR   = .\/$/;"	m
+QMAKE	Makefile	/^QMAKE         = \/usr\/lib64\/qt4\/bin\/qmake$/;"	m
+QMAKE_TARGET	Makefile	/^QMAKE_TARGET  = cg3D$/;"	m
+RANLIB	Makefile	/^RANLIB        = $/;"	m
+Renderable	renderable.h	/^class Renderable$/;"	c
+SED	Makefile	/^SED           = sed$/;"	m
+SOURCES	Makefile	/^SOURCES       = cube.cpp \\$/;"	m
+STRIP	Makefile	/^STRIP         = $/;"	m
+SYMLINK	Makefile	/^SYMLINK       = ln -f -s$/;"	m
+TAR	Makefile	/^TAR           = tar -cf$/;"	m
+TARGET	Makefile	/^TARGET        = cg3D$/;"	m
+Viewer	viewer.cpp	/^Viewer::Viewer() {$/;"	f	class:Viewer
+Viewer	viewer.h	/^class Viewer : public QGLViewer$/;"	c
+_CUBE_	cube.h	2;"	d
+_RENDERABLE_	renderable.h	2;"	d
+_VIEWER_	viewer.h	11;"	d
+addRenderable	viewer.cpp	/^void Viewer::addRenderable(Renderable *r)$/;"	f	class:Viewer
+allNormals	cube.cpp	/^static GLfloat allNormals[] = { $/;"	v	file:
+allVertices	cube.cpp	/^static GLfloat allVertices[] = { $/;"	v	file:
+animate	renderable.h	/^		virtual void animate() {};$/;"	f	class:Renderable
+animate	viewer.cpp	/^void Viewer::animate()$/;"	f	class:Viewer
+draw	cube.cpp	/^void Cube::draw()$/;"	f	class:Cube
+draw	viewer.cpp	/^void Viewer::draw()$/;"	f	class:Viewer
+drawArrays	cube.cpp	/^void Cube::drawArrays()$/;"	f	class:Cube
+drawElements	cube.cpp	/^void Cube::drawElements()$/;"	f	class:Cube
+drawImmediate	cube.cpp	/^void Cube::drawImmediate()$/;"	f	class:Cube
+helpString	viewer.cpp	/^QString Viewer::helpString() const$/;"	f	class:Viewer
+indices	cube.cpp	/^static GLubyte indices[6][4] = {$/;"	v	file:
+init	renderable.h	/^		virtual void init(Viewer&) {};$/;"	f	class:Renderable
+init	viewer.cpp	/^void Viewer::init()$/;"	f	class:Viewer
+keyPressEvent	renderable.h	/^		virtual void keyPressEvent(QKeyEvent*, Viewer&) {};$/;"	f	class:Renderable
+keyPressEvent	viewer.cpp	/^void Viewer::keyPressEvent(QKeyEvent *e)$/;"	f	class:Viewer
+main	main.cpp	/^int main(int argc, char** argv)$/;"	f
+mouseMoveEvent	renderable.h	/^		virtual void mouseMoveEvent(QMouseEvent*, Viewer&) {};$/;"	f	class:Renderable
+mouseMoveEvent	viewer.cpp	/^void Viewer::mouseMoveEvent(QMouseEvent *e)$/;"	f	class:Viewer
+normals	cube.cpp	/^static GLfloat normals[6][3] = {$/;"	v	file:
+renderableList	viewer.h	/^		list<Renderable *> renderableList;$/;"	m	class:Viewer
+toogleLight	viewer.h	/^		bool toogleLight;$/;"	m	class:Viewer
+toogleWireframe	viewer.h	/^		bool toogleWireframe;$/;"	m	class:Viewer
+vertices	cube.cpp	/^static GLfloat vertices[] = { $/;"	v	file:
+~Renderable	renderable.h	/^		virtual ~Renderable() {};$/;"	f	class:Renderable
+~Viewer	viewer.cpp	/^Viewer::~Viewer()$/;"	f	class:Viewer
