@@ -1,7 +1,12 @@
 *.o
 *.plist
 *.pro
+*.pro~
+*.xml
 compile.sh
 Makefile
+maritime
 Maritime.app
 Maritime.pbproj
+.qglviewer.xml
+
