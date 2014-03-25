@@ -225,15 +225,18 @@ void RenderableLoaded::loadXML(const char *filePath, const char *texturePath)
 		mNormals[9*i+8] = lNormTemp[lFaceTemp[i][2]][2];
 		//delete lNormTemp[lFaceNormTemp[i][2]];
 
-		mTextureVertices[6*i+0] = lTexTemp[lFaceTemp[i][0]][0];
-		mTextureVertices[6*i+1] = lTexTemp[lFaceTemp[i][0]][1];
+		if(mTextured)
+		{
+			mTextureVertices[6*i+0] = lTexTemp[lFaceTemp[i][0]][0];
+			mTextureVertices[6*i+1] = lTexTemp[lFaceTemp[i][0]][1];
 
-		mTextureVertices[6*i+2] = lTexTemp[lFaceTemp[i][1]][0];
-		mTextureVertices[6*i+3] = lTexTemp[lFaceTemp[i][1]][1];
+			mTextureVertices[6*i+2] = lTexTemp[lFaceTemp[i][1]][0];
+			mTextureVertices[6*i+3] = lTexTemp[lFaceTemp[i][1]][1];
 
-		mTextureVertices[6*i+4] = lTexTemp[lFaceTemp[i][2]][0];
-		mTextureVertices[6*i+5] = lTexTemp[lFaceTemp[i][2]][1];
-		//delete lVertTemp[lFaceTemp[i][1]];
+			mTextureVertices[6*i+4] = lTexTemp[lFaceTemp[i][2]][0];
+			mTextureVertices[6*i+5] = lTexTemp[lFaceTemp[i][2]][1];
+			//delete lVertTemp[lFaceTemp[i][1]];
+		}
 	}
 
 	if(mTextured)
