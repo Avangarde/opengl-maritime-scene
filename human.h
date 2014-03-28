@@ -10,10 +10,13 @@
 
 class Human : public Renderable {
 public:
-    Human(){
-        scale=1;
+
+    Human() {
+        scale = 1;
     }
-    Human(float theScale);
+
+    Human(float theScale) : scale(theScale) {
+    }
     void draw();
 
     float getScale() const {
@@ -30,7 +33,7 @@ private:
     static const float ARM_UP_RADIUS = 0.3;
     static const float ARM_HEIGHT = 1.5;
     static const float FOREARM_RADIUS = 0.5;
-    static const float CODE_RADIUS=0.5;
+    static const float CODE_RADIUS = 0.5;
     static const float FOREARM_DOWN_RADIUS = 0.6;
     static const float FOREARM_UP_RADIUS = 0.4;
     static const float FOREARM_HEIGHT = 2;
