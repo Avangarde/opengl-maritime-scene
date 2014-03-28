@@ -8,7 +8,8 @@ using namespace std;
 void Human::draw() {
     glPushMatrix();
     {
-        glRotatef(90,1,0,0);
+        glRotatef(90, 1, 0, 0);
+        glScalef(scale, scale, scale);
         drawUpperTorso();
         drawLowerTorso();
     }
@@ -27,7 +28,7 @@ void Human::drawFullShoulder(bool right) {
     glPushMatrix();
     {
         glTranslatef(rightArm*SHOULDER_DISTANCE, -SHOULDER_RADIUS, 0.0);
-        glRotatef(rightArm*120,0,0,1);
+        glRotatef(rightArm * 120, 0, 0, 1);
         drawFullArm(rightArm * SHOULDER_ANGLE);
     }
     glPopMatrix();
@@ -61,8 +62,8 @@ void Human::drawHip() {
         glColor3f(0.0f, 0.0f, 0.6f);
         quadratic = gluNewQuadric();
         //gluCylinder(quadratic, HIP_RADIUS, HIP_RADIUS, HIP_HEIGHT, PRECISION, PRECISION);
-        glTranslatef(0,0,HIP_HEIGHT/2);
-        Cylinder* cylinder= new Cylinder(HIP_HEIGHT,HIP_RADIUS);
+        glTranslatef(0, 0, HIP_HEIGHT / 2);
+        Cylinder* cylinder = new Cylinder(HIP_HEIGHT, HIP_RADIUS);
         cylinder->draw();
     }
     glPopMatrix();
@@ -182,7 +183,7 @@ void Human::drawFullArm(float angleShoulder) {
 void Human::drawFullLeg() {
     glPushMatrix();
     {
-        glRotatef(45,1,0,0);
+        glRotatef(45, 1, 0, 0);
         drawThigh();
         glPushMatrix();
         {

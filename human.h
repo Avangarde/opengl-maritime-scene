@@ -10,9 +10,22 @@
 
 class Human : public Renderable {
 public:
+    Human(){
+        scale=1;
+    }
+    Human(float theScale);
     void draw();
 
+    float getScale() const {
+        return scale;
+    }
+
+    void setScale(float scale) {
+        this->scale = scale;
+    }
+
 private:
+    float scale;
     static const int PRECISION = 20;
     static const float ARM_UP_RADIUS = 0.3;
     static const float ARM_HEIGHT = 1.5;
