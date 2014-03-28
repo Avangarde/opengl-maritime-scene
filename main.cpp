@@ -1,9 +1,9 @@
 
 #include <qapplication.h>
 #include "viewer.h"
-#include "terrain.h"
-#include "quadTree.h"
-//#include "cube.h"
+#include "Terrain.h"
+
+#define SIZE_TERRAIN 32
 
 int main(int argc, char** argv) {
     // Read command lines arguments.
@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     Viewer viewer;
 
     // build your scene here
-    viewer.addRenderable(new QuadTree());
+    viewer.addRenderable(new Terrain(SIZE_TERRAIN));
 
     viewer.setWindowTitle("viewer");
     // Make the viewer window visible on screen.

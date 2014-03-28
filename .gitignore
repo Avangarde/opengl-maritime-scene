@@ -11,3 +11,5 @@ Maritime.pbproj
 nbproject/
 .qglviewer.xml
 
+
+*.sh
