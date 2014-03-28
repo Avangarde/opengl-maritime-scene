@@ -2,6 +2,7 @@
 #include <qapplication.h>
 #include "viewer.h"
 #include "Terrain.h"
+#include "human.h"
 
 #define SIZE_TERRAIN 32
 
@@ -13,7 +14,18 @@ int main(int argc, char** argv) {
     Viewer viewer;
 
     // build your scene here
-    viewer.addRenderable(new Terrain(SIZE_TERRAIN));
+    
+    glPushMatrix();
+    {
+        
+        
+        glTranslatef(-SIZE_TERRAIN/2,0,-SIZE_TERRAIN/2);
+        viewer.addRenderable(new Terrain(SIZE_TERRAIN));
+        //viewer.addRenderable(new Human());
+    }
+    glPopMatrix();      
+
+
 
     viewer.setWindowTitle("viewer");
     // Make the viewer window visible on screen.
