@@ -27,7 +27,7 @@ void Human::drawFullShoulder(bool right) {
     float rightArm = right ? 1 : -1;
     glPushMatrix();
     {
-        glTranslatef(rightArm*SHOULDER_DISTANCE, -SHOULDER_RADIUS, 0.0);
+        glTranslatef(rightArm*SHOULDER_DISTANCE, -1*SHOULDER_RADIUS, 0.0);
         glRotatef(rightArm * 120, 0, 0, 1);
         drawFullArm(rightArm * SHOULDER_ANGLE);
     }
@@ -41,13 +41,13 @@ void Human::drawLowerTorso() {
         drawHip();
         glPushMatrix();
         {
-            glTranslatef(2.2, -HIP_RADIUS, 0.0);
+            glTranslatef(2.2, -1*HIP_RADIUS, 0.0);
             drawFullLeg();
         }
         glPopMatrix();
         glPushMatrix();
         {
-            glTranslatef(0.7, -HIP_RADIUS, 0.0);
+            glTranslatef(0.7, -1*HIP_RADIUS, 0.0);
             drawFullLeg();
         }
         glPopMatrix();

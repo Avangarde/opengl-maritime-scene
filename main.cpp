@@ -1,7 +1,7 @@
 
 #include <qapplication.h>
 #include "viewer.h"
-#include "Terrain.h"
+#include "terrain.h"
 #include "human.h"
 
 #define SIZE_TERRAIN 32

@@ -11,7 +11,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "Terrain.h"
+#include "terrain.h"
 
 //using namespace std;
 using namespace qglviewer;
