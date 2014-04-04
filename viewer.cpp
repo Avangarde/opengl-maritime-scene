@@ -12,8 +12,6 @@
 #include "terrain.h"
 #include "viewer.h"
 
-#define SIZE_TERRAIN 32
-#define HEIGHT_SCENE 16
 
 
 //Cube * env;
@@ -21,9 +19,6 @@ Terrain * terrain;
 Human * human;
 
 Viewer::Viewer() {
-    //env=new Cube();
-    terrain = new Terrain(SIZE_TERRAIN);
-    human = new Human(0.25f,Vec(0.0,0.0,HEIGHT_SCENE));
 }
 
 Viewer::~Viewer() {
@@ -32,8 +27,6 @@ Viewer::~Viewer() {
         delete(*it);
     }
     renderableList.clear();
-    delete(terrain);
-    delete(human);
 }
 
 void Viewer::addRenderable(Renderable *r) {
