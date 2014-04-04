@@ -1,12 +1,18 @@
 #ifndef _Human_
 #define _Human_
 
-#include "renderable.h"
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
 #endif
+
+#include <vector>
+#include <QGLViewer/vec.h>
+#include "particle.h"
+#include "renderable.h"
+
+using namespace std;
 
 class Human : public Renderable {
 public:
@@ -28,7 +34,6 @@ public:
     }
 
 private:
-    float scale;
     static const int PRECISION = 20;
     static const float ARM_UP_RADIUS = 0.3;
     static const float ARM_HEIGHT = 1.5;
@@ -53,6 +58,9 @@ private:
     static const float TORSO_DOWN_RADIUS = 2;
     static const float TORSO_UP_RADIUS = 1.5;
     static const float TORSO_HEIGHT = 4;
+    
+    float scale;
+    vector<Particle *> pipes;
 
     GLUquadricObj *quadratic;
 

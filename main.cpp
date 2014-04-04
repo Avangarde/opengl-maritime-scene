@@ -3,8 +3,8 @@
 #include "viewer.h"
 #include "terrain.h"
 #include "human.h"
+#include "cube.h"
 
-#define SIZE_TERRAIN 32
 
 int main(int argc, char** argv) {
     // Read command lines arguments.
@@ -15,8 +15,12 @@ int main(int argc, char** argv) {
 
     // build your scene here
 
-    viewer.addRenderable(new Terrain(SIZE_TERRAIN));
-    viewer.addRenderable(new Human(0.5));
+    //viewer.addRenderable(new Terrain(SIZE_TERRAIN));
+    //viewer.addRenderable(new Human(0.5));
+    glPushMatrix();
+    glScalef(50.0f,50.0f,50.0f);
+    //viewer.addRenderable(new Cube());
+    glPopMatrix();
 
     viewer.setWindowTitle("Projet Graphique 3D");
     // Make the viewer window visible on screen.

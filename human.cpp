@@ -2,8 +2,10 @@
 #include <math.h>
 #include "human.h"
 #include "cylinder.h"
+#include "particle.h"
 
 using namespace std;
+using namespace qglviewer;
 
 void Human::draw() {
     glPushMatrix();
@@ -85,6 +87,9 @@ void Human::drawHead() {
     {
         glColor3f(1.0f, 0.64f, 0.52f);
         glutSolidSphere(HEAD_RADIUS, PRECISION, PRECISION);
+        Vec initPos = Vec(0.0,HEAD_RADIUS,0.0);
+        Particle * particle1 = new Particle(initPos,Vec(),0.0,0.1);
+        this->pipes.push_back(particle1);
     }
     glPopMatrix();
 }
