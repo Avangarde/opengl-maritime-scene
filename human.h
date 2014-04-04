@@ -9,8 +9,10 @@
 
 #include <vector>
 #include <QGLViewer/vec.h>
+#include "cylinder.h"
 #include "particle.h"
 #include "renderable.h"
+#include "spring.h"
 
 using namespace std;
 
@@ -19,10 +21,17 @@ public:
 
     Human() {
         scale = 1;
+        beginningPipe = Vec(0.0, 0.0, 0.0);
     }
 
     Human(float theScale) : scale(theScale) {
+        beginningPipe = Vec(0.0, 0.0, 0.0);
     }
+    //TODO Correct the -1
+
+    Human(float scale, Vec beginPipe) : scale(scale), beginningPipe(-1 * beginPipe) {
+    }
+
     void draw();
 
     float getScale() const {
@@ -35,6 +44,8 @@ public:
 
 private:
     static const int PRECISION = 20;
+    static const int HEIGHT_PIPE = 1;
+    static const int RADIUS_PIPE = 0.2;
     static const float ARM_UP_RADIUS = 0.3;
     static const float ARM_HEIGHT = 1.5;
     static const float FOREARM_RADIUS = 0.5;
@@ -58,9 +69,11 @@ private:
     static const float TORSO_DOWN_RADIUS = 2;
     static const float TORSO_UP_RADIUS = 1.5;
     static const float TORSO_HEIGHT = 4;
-    
+
     float scale;
-    vector<Particle *> pipes;
+    Vec beginningPipe;
+    vector<Cylinder *> cylinders;
+    vector<Spring *> springs;
 
     GLUquadricObj *quadratic;
 

@@ -29,7 +29,7 @@ void Human::drawFullShoulder(bool right) {
     float rightArm = right ? 1 : -1;
     glPushMatrix();
     {
-        glTranslatef(rightArm*SHOULDER_DISTANCE, -1*SHOULDER_RADIUS, 0.0);
+        glTranslatef(rightArm*SHOULDER_DISTANCE, -1 * SHOULDER_RADIUS, 0.0);
         glRotatef(rightArm * 120, 0, 0, 1);
         drawFullArm(rightArm * SHOULDER_ANGLE);
     }
@@ -43,13 +43,13 @@ void Human::drawLowerTorso() {
         drawHip();
         glPushMatrix();
         {
-            glTranslatef(2.2, -1*HIP_RADIUS, 0.0);
+            glTranslatef(2.2, -1 * HIP_RADIUS, 0.0);
             drawFullLeg();
         }
         glPopMatrix();
         glPushMatrix();
         {
-            glTranslatef(0.7, -1*HIP_RADIUS, 0.0);
+            glTranslatef(0.7, -1 * HIP_RADIUS, 0.0);
             drawFullLeg();
         }
         glPopMatrix();
@@ -87,9 +87,33 @@ void Human::drawHead() {
     {
         glColor3f(1.0f, 0.64f, 0.52f);
         glutSolidSphere(HEAD_RADIUS, PRECISION, PRECISION);
-        Vec initPos = Vec(0.0,HEAD_RADIUS,0.0);
-        Particle * particle1 = new Particle(initPos,Vec(),0.0,0.1);
-        this->pipes.push_back(particle1);
+
+        for (int i = 0; i < PRECISION; i++) {
+            //Dibujar las particulas y poner un Spring entre ellas
+            //particle1 = new Particle(initPos, Vec(), 0.0, 0.5);
+            Cylinder* cylinder = new Cylinder(beginningPipe.z / (float) PRECISION, 0.2);
+            this->cylinders.push_back(cylinder);
+        }
+        //this->springs.push_back(new Spring(pipes.back(), particle1, 1, 1, 1));
+        Vec initPos = Vec(0.0, 0.0, -1 * HEAD_RADIUS);
+        vector<Cylinder *>::iterator itP;
+        for (itP = cylinders.begin(); itP != cylinders.end(); ++itP) {
+            glPushMatrix();
+            {
+                glTranslatef(initPos.x, initPos.y, initPos.z);
+                (*itP)->draw();
+            }
+            glPopMatrix();
+            initPos += this->beginningPipe / (float) PRECISION;
+        }
+        // Springs
+        /**glColor3f(1.0, 0.28, 0.0);
+        glLineWidth(5.0);
+        vector<Spring *>::iterator itS;
+        for (itS = springs.begin(); itS != springs.end(); ++itS) {
+            cout << "Drawing Spring\n";
+            (*itS)->draw();
+        }*/
     }
     glPopMatrix();
 }

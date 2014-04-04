@@ -13,6 +13,7 @@
 #include "viewer.h"
 
 #define SIZE_TERRAIN 32
+#define HEIGHT_SCENE 16
 
 
 //Cube * env;
@@ -22,7 +23,7 @@ Human * human;
 Viewer::Viewer() {
     //env=new Cube();
     terrain = new Terrain(SIZE_TERRAIN);
-    human = new Human(0.25f);
+    human = new Human(0.25f,Vec(0.0,0.0,HEIGHT_SCENE));
 }
 
 Viewer::~Viewer() {
@@ -45,7 +46,7 @@ void Viewer::init() {
     glutInit(&dum, NULL);
 
     //=== VIEWING PARAMETERS
-    restoreStateFromFile(); // Restore previous viewer state.
+    //restoreStateFromFile(); // Restore previous viewer state.
 
     toogleWireframe = false; // filled faces
     toogleLight = true; // light on
