@@ -12,7 +12,6 @@
 #include "terrain.h"
 #include "viewer.h"
 
-#define SIZE_TERRAIN 32
 
 
 //Cube * env;
@@ -20,9 +19,7 @@ Terrain * terrain;
 Human * human;
 
 Viewer::Viewer() {
-    //env=new Cube();
-    terrain = new Terrain(SIZE_TERRAIN);
-    human = new Human(0.25f);
+
 }
 
 Viewer::~Viewer() {
@@ -45,7 +42,7 @@ void Viewer::init() {
     glutInit(&dum, NULL);
 
     //=== VIEWING PARAMETERS
-    restoreStateFromFile(); // Restore previous viewer state.
+    //restoreStateFromFile(); // Restore previous viewer state.
 
     toogleWireframe = false; // filled faces
     toogleLight = true; // light on
@@ -56,15 +53,12 @@ void Viewer::init() {
     else
         glDisable(GL_LIGHTING);
 
-    setSceneRadius(10.0f);
+    setSceneRadius(100.0f);
 
     list<Renderable *>::iterator it;
     for (it = renderableList.begin(); it != renderableList.end(); ++it) {
         (*it)->init(*this);
     }
-    //    env->init(*this);
-    terrain->init(*this);
-    human->init(*this);
 }
 
 void Viewer::draw() {
@@ -73,18 +67,6 @@ void Viewer::draw() {
     for (it = renderableList.begin(); it != renderableList.end(); ++it) {
         (*it)->draw();
     }
-    glPushMatrix();
-    {
-        float center = terrain->d[SIZE_TERRAIN / 2][SIZE_TERRAIN / 2];
-        if (center >= 0) {
-            center=-center;
-        }
-        glTranslatef(-1 * SIZE_TERRAIN / 2, center, -1 * SIZE_TERRAIN / 2);
-        terrain->draw();
-    }
-    glPopMatrix();
-    human->draw();
-
 }
 
 void Viewer::animate() {

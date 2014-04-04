@@ -10,13 +10,14 @@
 
 class Cube : public Renderable {
 public:
+    Cube(float side);
     void draw();
 
 private:
-    //float fogCol[3];
     void drawImmediate();
     void drawElements();
     void drawArrays();
+    float side;
 };
 
 #endif

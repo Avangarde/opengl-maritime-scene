@@ -4,6 +4,7 @@
 #include "terrain.h"
 #include "human.h"
 #include "cube.h"
+#include "landscape.h"
 
 
 int main(int argc, char** argv) {
@@ -17,10 +18,9 @@ int main(int argc, char** argv) {
 
     //viewer.addRenderable(new Terrain(SIZE_TERRAIN));
     //viewer.addRenderable(new Human(0.5));
-    glPushMatrix();
-    glScalef(50.0f,50.0f,50.0f);
-    //viewer.addRenderable(new Cube());
-    glPopMatrix();
+    viewer.addRenderable(new Terrain(100));
+    viewer.addRenderable(new Landscape());
+    viewer.addRenderable(new Cube(1));
 
     viewer.setWindowTitle("Projet Graphique 3D");
     // Make the viewer window visible on screen.
