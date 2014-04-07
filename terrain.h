@@ -30,11 +30,11 @@ public:
     int size;
     int solidId;
     static double unused;
-    std::vector<std::vector<double> > d; // La grille d'élévation
+    std::vector<std::vector<double> > rise; // La grille d'élévation
+    std::vector<std::vector<qglviewer::Vec> > normals;
 
     virtual void init(Viewer&);
     void createTerrain(int, int, int, int, double);
-    void createList();
     qglviewer::Vec getNormal(int, int);
 
     void draw();

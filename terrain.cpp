@@ -19,6 +19,7 @@ using namespace qglviewer;
 std::ofstream myfile;
 
 double Terrain::unused = -10032.4775;
+qglviewer::Vec noNormal = (Vec(0,0,0));
 
 Terrain::Terrain() {
 }
@@ -32,14 +33,17 @@ Terrain::~Terrain() {
 Terrain::Terrain(int r) : size(r) {
     std::vector<double> nullRow(size, unused);
     std::vector<std::vector<double> > nullMatrix(size, nullRow);
-    d = nullMatrix;
+    rise = nullMatrix;
+    std::vector<qglviewer::Vec> nullRowNormal(size, noNormal);
+    std::vector<std::vector<qglviewer::Vec> > nullMatrixNormal(size, nullRowNormal);
+    normals = nullMatrixNormal;
 }
 
 void Terrain::init(Viewer &) {
-    d[0][0] = ((double) rand() / RAND_MAX);
-    d[0][size - 1] = ((double) rand() / RAND_MAX);
-    d[size - 1][0] = ((double) rand() / RAND_MAX);
-    d[size - 1][size - 1] = ((double) rand() / RAND_MAX);
+    rise[0][0] = ((double) rand() / RAND_MAX);
+    rise[0][size - 1] = ((double) rand() / RAND_MAX);
+    rise[size - 1][0] = ((double) rand() / RAND_MAX);
+    rise[size - 1][size - 1] = ((double) rand() / RAND_MAX);
     createTerrain(0, 0, size - 1, size - 1, 0.15);
 }
 
@@ -48,19 +52,19 @@ void Terrain::createTerrain(int x1, int y1, int x2, int y2, double roughness) {
     int y12 = (y1 + y2) / 2;
 
     if (y12 < y2) {
-        if (d[x1][y12] == unused) {
-            d[x1][y12] = (d[x1][y1] + d[x1][y2]) / 2 + scale(roughness * (y2 - y1));
+        if (rise[x1][y12] == unused) {
+            rise[x1][y12] = (rise[x1][y1] + rise[x1][y2]) / 2 + scale(roughness * (y2 - y1));
         }
-        d[x2][y12] = (d[x2][y1] + d[x2][y2]) / 2 + scale(roughness * (y2 - y1));
+        rise[x2][y12] = (rise[x2][y1] + rise[x2][y2]) / 2 + scale(roughness * (y2 - y1));
     }
     if (x12 < x2) {
-        if (d[x12][y1] == unused) {
-            d[x12][y1] = (d[x1][y1] + d[x2][y1]) / 2 + scale(roughness * (x2 - x1));
+        if (rise[x12][y1] == unused) {
+            rise[x12][y1] = (rise[x1][y1] + rise[x2][y1]) / 2 + scale(roughness * (x2 - x1));
         }
-        d[x12][y2] = (d[x1][y2] + d[x2][y2]) / 2 + scale(roughness * (x2 - x1));
+        rise[x12][y2] = (rise[x1][y2] + rise[x2][y2]) / 2 + scale(roughness * (x2 - x1));
     }
     if (x12 < x2 && y12 < y2) {
-        d[x12][y12] = (d[x1][y1] + d[x2][y1] + d[x1][y2] + d[x2][y2]) / 4
+        rise[x12][y12] = (rise[x1][y1] + rise[x2][y1] + rise[x1][y2] + rise[x2][y2]) / 4
                 + scale(roughness * (fabs((double) (x2 - x1)) + fabs((double) (y2 - y1))));
     }
     if (x12 < x2 - 1 || y12 < y2 - 1) {
@@ -71,49 +75,14 @@ void Terrain::createTerrain(int x1, int y1, int x2, int y2, double roughness) {
     }
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            if (d[i][j] < 0) d[i][j] = 0;
+            if (rise[i][j] < 0) rise[i][j] = 0;
         }
     }
-    solidId = glGenLists(1);
-    //createList();
-}
-
-void Terrain::createList() {
-
-    glNewList(solidId, GL_COMPILE);
-//    Vec normal;
-//    glBegin(GL_TRIANGLES);
-//    glColor3f(0.8f, 0.8f, 0.8f);
-//    for (int x = 1; x < size - 2; x++) {
-//        for (int z = 1; z < size - 2; z++) {
-//            
-//            normal = getNormal(x, z);
-//            glNormal3f(normal[0], normal[1], normal[2]);
-//            glVertex3f(x, d[x][z], z);
-//            
-//            normal = getNormal(x, z);
-//            glNormal3f(normal[0], normal[1], normal[2]);
-//            glVertex3f(x + 1, d[x + 1][z], z);
-//            
-//            normal = getNormal(x, z + 1);
-//            glNormal3f(normal[0], normal[1], normal[2]);
-//            glVertex3f(x, d[x][z + 1], z + 1);
-//            
-//            normal = getNormal(x + 1, z);
-//            glNormal3f(normal[0], normal[1], normal[2]);
-//            glVertex3f(x + 1, d[x + 1][z], z);
-//            
-//            normal = getNormal(x + 1, z + 1);
-//            glNormal3f(normal[0], normal[1], normal[2]);
-//            glVertex3f(x + 1, d[x + 1][z + 1], z + 1);
-//            
-//            normal = getNormal(x, z + 1);
-//            glNormal3f(normal[0], normal[1], normal[2]);
-//            glVertex3f(x, d[x][z + 1], z + 1);
-//        }
-//    }
-//    glEnd();
-    glEndList();
+    for (int x = 1; x <= size - 2; x++) {
+        for (int z = 1; z <= size - 2; z++) {          
+            normals[x][z] = getNormal(x, z);
+        }
+    }
 }
 
 qglviewer::Vec Terrain::getNormal(int x, int z) {
@@ -131,10 +100,10 @@ qglviewer::Vec Terrain::getNormal(int x, int z) {
     }
 
     Vec normal, normal1, normal2, normal3, normal4;
-    normal1 = -((Vec(x, d[x][z + 1], z + 1) - Vec(x, d[x][z], z))^(Vec(x - 1, d[x - 1][z], z) - Vec(x, d[x][z], z)));
-    normal2 = -((Vec(x - 1, d[x - 1][z], z) - Vec(x, d[x][z], z))^(Vec(x, d[x][z - 1], z - 1) - Vec(x, d[x][z], z)));
-    normal3 = -((Vec(x, d[x][z - 1], z - 1) - Vec(x, d[x][z], z))^(Vec(x + 1, d[x + 1][z], z) - Vec(x, d[x][z], z)));
-    normal4 = -((Vec(x + 1, d[x + 1][z], z) - Vec(x, d[x][z], z))^(Vec(x, d[x][z + 1], z + 1) - Vec(x, d[x][z], z)));
+    normal1 = -((Vec(x, rise[x][z + 1], z + 1) - Vec(x, rise[x][z], z))^(Vec(x - 1, rise[x - 1][z], z) - Vec(x, rise[x][z], z)));
+    normal2 = -((Vec(x - 1, rise[x - 1][z], z) - Vec(x, rise[x][z], z))^(Vec(x, rise[x][z - 1], z - 1) - Vec(x, rise[x][z], z)));
+    normal3 = -((Vec(x, rise[x][z - 1], z - 1) - Vec(x, rise[x][z], z))^(Vec(x + 1, rise[x + 1][z], z) - Vec(x, rise[x][z], z)));
+    normal4 = -((Vec(x + 1, rise[x + 1][z], z) - Vec(x, rise[x][z], z))^(Vec(x, rise[x][z + 1], z + 1) - Vec(x, rise[x][z], z)));
 
     normal1.normalize();
     normal2.normalize();
@@ -149,39 +118,40 @@ qglviewer::Vec Terrain::getNormal(int x, int z) {
 
 void Terrain::draw() {
     
-//    glCallList(solidId);
     glPushMatrix();
     glRotated(90, 1, 0, 0);
-    glTranslatef(-size, 0, -size);
+    glTranslatef(-size*2, 0, -size*2);
+//    glScalef(4.0, 0.0, 4.0);
+//    glTranslatef(-size/2, 0, -size/2);
     Vec normal;
     glBegin(GL_TRIANGLES);
     glColor3f(0.8f, 0.8f, 0.8f);
     for (int x = 1; x < size - 2; x++) {
         for (int z = 1; z < size - 2; z++) {
             
-            normal = getNormal(x, z);
+            normal = normals[x][z];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(2*x, d[x][z], 2*z);
+            glVertex3f(4*x, rise[x][z], 4*z);
             
-            normal = getNormal(x, z);
+            normal = normals[x+1][z];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(2*(x + 1), d[x + 1][z], 2*z);
+            glVertex3f(4*(x + 1), rise[x + 1][z], 4*z);
             
-            normal = getNormal(x, z + 1);
+            normal = normals[x][z + 1];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(2*x, d[x][z + 1], 2*(z + 1));
+            glVertex3f(4*x, rise[x][z + 1], 4*(z + 1));
             
-            normal = getNormal(x + 1, z);
+            normal = normals[x + 1][z];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(2*(x + 1), d[x + 1][z], 2*z);
+            glVertex3f(4*(x + 1), rise[x + 1][z], 4*z);
             
-            normal = getNormal(x + 1, z + 1);
+            normal = normals[x + 1][z + 1];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(2*(x + 1), d[x + 1][z + 1], 2*(z + 1));
+            glVertex3f(4*(x + 1), rise[x + 1][z + 1], 4*(z + 1));
             
-            normal = getNormal(x, z + 1);
+            normal = normals[x][z + 1];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(2*x, d[x][z + 1], 2*(z + 1));
+            glVertex3f(4*x, rise[x][z + 1], 4*(z + 1));
         }
     }
     glEnd();
