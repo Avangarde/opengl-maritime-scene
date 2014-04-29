@@ -37,9 +37,7 @@ public:
     void createList();
     qglviewer::Vec getNormal(int, int);
 
-    void draw() {
-        glCallList(solidId);
-    }
+    void draw();
 
     double scale(double x) {
         return x * (((double) rand() / RAND_MAX) - 0.5);

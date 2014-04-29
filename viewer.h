@@ -12,6 +12,10 @@
 
 #include <QGLViewer/qglviewer.h>
 #include <list>
+
+#define SIZE_TERRAIN 100
+#define HEIGHT_SCENE 95
+
 using namespace std;
 
 class Renderable;
