@@ -2,6 +2,7 @@
 #define _CYLINDER_
 
 #include "renderable.h"
+#include "viewer.h"
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
@@ -11,12 +12,13 @@
 #define M_PI 3.14159265
 #endif
 //Define the NO_POINTS
-const int NO_POINTS = 100;
+const int NO_POINTS = 16;
 
 class Cylinder : public Renderable {
 public:
     Cylinder(float height, float radius);
-    void draw(); 
+    void init(Viewer&);
+    void draw();
 
 private:
     float height;
