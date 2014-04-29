@@ -8,44 +8,51 @@
 #endif
 
 #include <vector>
+#include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/vec.h>
 #include "cylinder.h"
 #include "particle.h"
 #include "renderable.h"
 #include "spring.h"
+#include "tube.h"
 
 using namespace std;
 
 class Human : public Renderable {
 public:
 
-    Human() {
+    Human():tube(new Tube()) {
         scale = 1;
-        beginningPipe = Vec(0.0, 0.0, 0.0);
+        velocity = Vec(0.0,0.0,0.0);
     }
 
-    Human(float theScale) : scale(theScale) {
-        beginningPipe = Vec(0.0, 0.0, 0.0);
+    Human(float theScale) : scale(theScale),tube(new Tube()) {
+        velocity = Vec(0.0,0.0,0.0);
     }
-    //TODO Correct the -1
 
-    Human(float scale, Vec beginPipe) : scale(scale), beginningPipe(-1 * beginPipe) {
+    Human(float scale, Vec position, Vec beginPipe) : scale(scale), position(position), tube(new Tube(beginPipe)) {
+        velocity = Vec(0.0,0.0,0.0);
     }
 
     void draw();
-
-    float getScale() const {
-        return scale;
+    void init(Viewer&);
+    virtual void animate();
+    void keyPressEvent(QKeyEvent*, Viewer&);
+    void mouseMoveEvent(QMouseEvent*, Viewer&);
+    void setScale(float scale);
+    float getScale() const;
+    Vec getPosition() const {
+        return position;
     }
 
-    void setScale(float scale) {
-        this->scale = scale;
+    void setPosition(Vec position) {
+        this->position = position;
     }
+
 
 private:
     static const int PRECISION = 20;
-    static const int HEIGHT_PIPE = 1;
-    static const int RADIUS_PIPE = 0.2;
+//    static const int PRECISION_PIPE = 20;
     static const float ARM_UP_RADIUS = 0.3;
     static const float ARM_HEIGHT = 1.5;
     static const float FOREARM_RADIUS = 0.5;
@@ -57,10 +64,11 @@ private:
     static const float HIP_RADIUS = 0.5;
     static const float HIP_HEIGHT = 3;
     static const float KNEE_RADIUS = 0.7;
+//    static const float RADIUS_PIPE = 0.2;
     static const float SHIN_UP_RADIUS = 0.6;
     static const float SHIN_DOWN_RADIUS = 0.45;
     static const float SHIN_HEIGHT = 2;
-    static const float SHOULDER_ANGLE = 25;
+    static const float SHOULDER_ANGLE = -25;
     static const float SHOULDER_DISTANCE = 2;
     static const float SHOULDER_RADIUS = 0.6;
     static const float THIGH_HEIGHT = 1.8;
@@ -71,9 +79,11 @@ private:
     static const float TORSO_HEIGHT = 4;
 
     float scale;
-    Vec beginningPipe;
-    vector<Cylinder *> cylinders;
-    vector<Spring *> springs;
+    Tube* tube;
+    Vec position;
+    Vec velocity;
+//    vector<Cylinder *> cylinders;
+//    vector<Spring *> springs;
 
     GLUquadricObj *quadratic;
 

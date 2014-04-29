@@ -22,7 +22,7 @@ class Cylinder : public Renderable {
 public:
     Cylinder(float height, float radius);
     Cylinder(Vec pos, float height, float radius);
-    void init();
+    void init(Viewer&);
     void draw();
     float getAngleXY() {
         return angleXY;

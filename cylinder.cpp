@@ -17,7 +17,7 @@ position(pos),
 radius(radius) {
 }
 
-void Cylinder::init() {
+void Cylinder::init(Viewer& viewer) {
     float t, s;
     for (int i = 0; i <= NO_POINTS; ++i) {
         t = 2 * M_PI * (float) (i) / (float) NO_POINTS;
@@ -52,8 +52,8 @@ void Cylinder::draw() {
 
     // draw immediate (center Cylinder)
     
-    glTranslatef(position.x, position.y, position.z);
-    glRotatef(angleXY,1.0,1.0,0.0);
+    //glTranslatef(position.x, position.y, position.z);
+    //glRotatef(angleXY,1.0,1.0,0.0);
     
     drawImmediate();
 
