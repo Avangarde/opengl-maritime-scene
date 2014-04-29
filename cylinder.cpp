@@ -1,14 +1,25 @@
-#include <iostream>
 #include "cylinder.h"
-#include <math.h>
-#include <vector>
 
 using namespace std;
+
+GLfloat cylinderPoints [NO_POINTS][4][3];
 
 Cylinder::Cylinder(float height, float radius) {
     this->height = height / 2;
     this->radius = radius;
 };
+
+void Cylinder::init(Viewer&) {
+    float t, s;
+    for (int i = 0; i <= NO_POINTS; ++i) {
+        t = 2 * M_PI * (float) (i) / (float) NO_POINTS;
+        s = 2 * M_PI * (float) (i + 1) / (float) NO_POINTS;
+        cylinderPoints[i][0] = {cos(t) * radius, sin(t) * radius, -height};
+        cylinderPoints[i][1] = {cos(s) * radius, sin(s) * radius, -height};
+        cylinderPoints[i][2] = {cos(t) * radius, sin(t) * radius, height};
+        cylinderPoints[i][3] = {cos(s) * radius, sin(s) * radius, height};
+    }
+}
 
 void Cylinder::draw() {
     glPushMatrix();
@@ -79,19 +90,12 @@ void Cylinder::drawImmediate() {
     drawCircle(height);
 
     for (int i = 0; i <= NO_POINTS; ++i) {
-        float const t = 2 * M_PI * (float) (i) / (float) NO_POINTS;
-        float const s = 2 * M_PI * (float) (i + 1) / (float) NO_POINTS;
-        GLfloat leftDown[3] = {cos(t) * radius, sin(t) * radius, -height};
-        GLfloat rightDown[3] = {cos(s) * radius, sin(s) * radius, -height};
-        GLfloat leftUp[3] = {cos(t) * radius, sin(t) * radius, height};
-        GLfloat rightUp[3] = {cos(s) * radius, sin(s) * radius, height};
-
         glBegin(GL_QUADS);
-        glNormal3fv(normal(leftDown, rightDown, rightUp));
-        glVertex3fv(leftDown);
-        glVertex3fv(rightDown);
-        glVertex3fv(rightUp);
-        glVertex3fv(leftUp);
+        glNormal3fv(normal(cylinderPoints[i][0], cylinderPoints[i][1], cylinderPoints[i][3]));
+        glVertex3fv(cylinderPoints[i][0]);
+        glVertex3fv(cylinderPoints[i][1]);
+        glVertex3fv(cylinderPoints[i][3]);
+        glVertex3fv(cylinderPoints[i][2]);
         glEnd();
     }
 }

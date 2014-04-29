@@ -5,7 +5,7 @@
 #endif
 
 #include "particle.h"
-#include <math.h>
+#include "cylinder.h"
 
 Particle::Particle(Vec pos, Vec vel, double m, double r)
 	: position(pos),
@@ -65,6 +65,7 @@ void Particle::incrVelocity(const Vec &vel)
 {
 	velocity += vel;
 }
+
 
 
 

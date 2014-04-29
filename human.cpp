@@ -7,10 +7,32 @@
 using namespace std;
 using namespace qglviewer;
 
+float Human::getScale() const {
+    return scale;
+}
+
+void Human::setScale(float scale) {
+    this->scale = scale;
+}
+
+void Human::init(Viewer& viewer) {
+    float cylinderHeight = beginningPipe.z / (float) PRECISION_PIPE;
+    for (int i = 0; i < PRECISION_PIPE; i++) {
+        //Dibujar las particulas y poner un Spring entre ellas
+        //particle1 = new Particle(initPos, Vec(), 0.0, 0.5);
+        Cylinder* cylinder = new Cylinder(cylinderHeight, RADIUS_PIPE);
+        cylinder->init(viewer);
+        this->cylinders.push_back(cylinder);
+    }
+
+    viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
+    viewer.manipulatedFrame()->setPosition(this->getPosition());
+}
+
 void Human::draw() {
     glPushMatrix();
     {
-        glRotatef(90, 1, 0, 0);
+        //glRotatef(90, 1, 0, 0);
         glScalef(scale, scale, scale);
         drawUpperTorso();
         drawLowerTorso();
@@ -87,15 +109,9 @@ void Human::drawHead() {
     {
         glColor3f(1.0f, 0.64f, 0.52f);
         glutSolidSphere(HEAD_RADIUS, PRECISION, PRECISION);
-
-        for (int i = 0; i < PRECISION; i++) {
-            //Dibujar las particulas y poner un Spring entre ellas
-            //particle1 = new Particle(initPos, Vec(), 0.0, 0.5);
-            Cylinder* cylinder = new Cylinder(beginningPipe.z / (float) PRECISION, 0.2);
-            this->cylinders.push_back(cylinder);
-        }
         //this->springs.push_back(new Spring(pipes.back(), particle1, 1, 1, 1));
-        Vec initPos = Vec(0.0, 0.0, -1 * HEAD_RADIUS);
+        float cylinderHeight = beginningPipe.z / (float) PRECISION_PIPE;
+        Vec initPos = Vec(0.0, 0.0, cylinderHeight / 2);
         vector<Cylinder *>::iterator itP;
         for (itP = cylinders.begin(); itP != cylinders.end(); ++itP) {
             glPushMatrix();
@@ -104,7 +120,7 @@ void Human::drawHead() {
                 (*itP)->draw();
             }
             glPopMatrix();
-            initPos += this->beginningPipe / (float) PRECISION;
+            initPos += this->beginningPipe / (float) PRECISION_PIPE;
         }
         // Springs
         /**glColor3f(1.0, 0.28, 0.0);
@@ -212,7 +228,7 @@ void Human::drawFullArm(float angleShoulder) {
 void Human::drawFullLeg() {
     glPushMatrix();
     {
-        glRotatef(45, 1, 0, 0);
+        glRotatef(-45, 1, 0, 0);
         drawThigh();
         glPushMatrix();
         {
@@ -224,7 +240,7 @@ void Human::drawFullLeg() {
                 drawShin();
                 glPushMatrix();
                 {
-                    glTranslatef(0.0, -2.2, 0.5);
+                    glTranslatef(0.0, -2.2, -0.5);
                     drawFoot();
                 }
                 glPopMatrix();
@@ -291,4 +307,12 @@ void Human::drawFoot() {
         glutSolidCube(1);
     }
     glPopMatrix();
+}
+
+void Human::mouseMoveEvent(QMouseEvent*, Viewer& v) {
+    this->setPosition(v.manipulatedFrame()->position());
+}
+
+void Human::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
+    const Qt::KeyboardModifiers modifiers = e->modifiers();
 }
