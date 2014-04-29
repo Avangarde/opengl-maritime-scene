@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
     viewer.addRenderable(terrain);
     viewer.addRenderable(new Landscape());
     viewer.addRenderable(new Human(1.0,Vec(0.0,5.0,0.0),Vec(0.0,0.0,HEIGHT_SCENE)));
+    viewer.addRenderable(new DynamicSystem(terrain));
 
     viewer.setWindowTitle("Projet Graphique 3D");
     // Make the viewer window visible on screen.

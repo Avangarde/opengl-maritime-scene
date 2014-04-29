@@ -6,6 +6,7 @@
 
 #include "particle.h"
 #include "cylinder.h"
+#include <math.h>
 
 Particle::Particle(Vec pos, Vec vel, double m, double r)
 	: position(pos),
