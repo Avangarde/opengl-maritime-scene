@@ -5,6 +5,7 @@
 #endif
 
 #include "particle.h"
+#include <math.h>
 
 Particle::Particle(Vec pos, Vec vel, double m, double r)
 	: position(pos),
@@ -76,7 +77,13 @@ void Particle::draw() const
 
 }
 
-
+double Particle::distance(Particle* p) {
+    //((a.x – b.x) * (a.x – b.x)) + ((a.y – b.y) * (a.y – b.y)) + ((a.z – b.z) * (a.z – b.z))
+    Vec pos = p->getPosition() - getPosition();
+    double distance = sqrt((pos.x*pos.x)+(pos.y*pos.y)+(pos.z*pos.z));
+    distance = abs(distance) - getRadius() - p->getRadius();
+    return distance;
+}
 
 std::ostream& operator<<(std::ostream& os, const Particle& p)
 {
