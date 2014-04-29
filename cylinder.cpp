@@ -1,19 +1,60 @@
-#include <iostream>
 #include "cylinder.h"
-#include <math.h>
-#include <vector>
 
 using namespace std;
+using namespace qglviewer;
 
-Cylinder::Cylinder(float height, float radius) {
-    this->height = height / 2;
-    this->radius = radius;
+GLfloat cylinderPoints [NO_POINTS][4][3];
+
+Cylinder::Cylinder(float height, float radius) :
+height(height / 2),
+position(Vec(0.0, 0.0, 0.0)),
+radius(radius) {
 };
+
+Cylinder::Cylinder(Vec pos, float height, float radius) :
+height(height / 2),
+position(pos),
+radius(radius) {
+}
+
+void Cylinder::init() {
+    float t, s;
+    for (int i = 0; i <= NO_POINTS; ++i) {
+        t = 2 * M_PI * (float) (i) / (float) NO_POINTS;
+        s = 2 * M_PI * (float) (i + 1) / (float) NO_POINTS;
+
+        // First corner
+        cylinderPoints[i][0][0] = cos(t) * radius;
+        cylinderPoints[i][0][1] = sin(t) * radius;
+        cylinderPoints[i][0][2] = -height;
+
+        // Second corner
+        cylinderPoints[i][1][0] = cos(s) * radius;
+        cylinderPoints[i][1][1] = sin(s) * radius;
+        cylinderPoints[i][1][2] = -height;
+
+        // Third corner
+        cylinderPoints[i][2][0] = cos(t) * radius;
+        cylinderPoints[i][2][1] = sin(t) * radius;
+        cylinderPoints[i][2][2] = height;
+
+        // Fourth corner
+        cylinderPoints[i][3][0] = cos(s) * radius;
+        cylinderPoints[i][3][1] = sin(s) * radius;
+        cylinderPoints[i][3][2] = height;
+
+
+    }
+}
 
 void Cylinder::draw() {
     glPushMatrix();
 
     // draw immediate (center Cylinder)
+    
+    glTranslatef(position.x, position.y, position.z);
+    glRotatef(angleXY,1.0,1.0,0.0);
+    
     drawImmediate();
 
     // draw arrays (left Cylinder)
@@ -74,24 +115,16 @@ void Cylinder::drawCircle(float z) {
 // immediate definition of individual vertex properties
 
 void Cylinder::drawImmediate() {
-
     drawCircle(-height);
     drawCircle(height);
 
     for (int i = 0; i <= NO_POINTS; ++i) {
-        float const t = 2 * M_PI * (float) (i) / (float) NO_POINTS;
-        float const s = 2 * M_PI * (float) (i + 1) / (float) NO_POINTS;
-        GLfloat leftDown[3] = {cos(t) * radius, sin(t) * radius, -height};
-        GLfloat rightDown[3] = {cos(s) * radius, sin(s) * radius, -height};
-        GLfloat leftUp[3] = {cos(t) * radius, sin(t) * radius, height};
-        GLfloat rightUp[3] = {cos(s) * radius, sin(s) * radius, height};
-
         glBegin(GL_QUADS);
-        glNormal3fv(normal(leftDown, rightDown, rightUp));
-        glVertex3fv(leftDown);
-        glVertex3fv(rightDown);
-        glVertex3fv(rightUp);
-        glVertex3fv(leftUp);
+        glNormal3fv(normal(cylinderPoints[i][0], cylinderPoints[i][1], cylinderPoints[i][3]));
+        glVertex3fv(cylinderPoints[i][0]);
+        glVertex3fv(cylinderPoints[i][1]);
+        glVertex3fv(cylinderPoints[i][3]);
+        glVertex3fv(cylinderPoints[i][2]);
         glEnd();
     }
 }
