@@ -1,14 +1,15 @@
 #ifndef _CYLINDER_
 #define _CYLINDER_
 
-#include "renderable.h"
-#include "viewer.h"
-#include <QGLViewer/vec.h>
+
 
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
+#include "renderable.h"
+#include "viewer.h"
+#include <QGLViewer/vec.h>
 #endif
 #ifndef M_PI
 #define M_PI 3.14159265
@@ -24,12 +25,21 @@ public:
     Cylinder(Vec pos, float height, float radius);
     void init(Viewer&);
     void draw();
+
     float getAngleXY() {
-        return angleXY;
+        return angleXZ;
     }
 
     void setAngleXY(float angleXY) {
-        Cylinder::angleXY = angleXY;
+        Cylinder::angleXZ = angleXY;
+    }
+
+    float getAngleYZ() const {
+        return angleYZ;
+    }
+
+    void setAngleYZ(float angleYZ) {
+        this->angleYZ = angleYZ;
     }
 
     Vec getPosition() const {
@@ -51,9 +61,10 @@ public:
 private:
     float height;
     float radius;
-    float angleXY;
+    float angleXZ;
+    float angleYZ;
     Vec position;
-    
+
     void drawImmediate();
     void drawElements();
     void drawArrays();

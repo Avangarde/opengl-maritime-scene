@@ -16,14 +16,6 @@ void Human::setScale(float scale) {
 }
 
 void Human::init(Viewer& viewer) {
-//    float cylinderHeight = beginningPipe.z / (float) PRECISION_PIPE;
-//    for (int i = 0; i < PRECISION_PIPE; i++) {
-//        //Dibujar las particulas y poner un Spring entre ellas
-//        //particle1 = new Particle(initPos, Vec(), 0.0, 0.5);
-//        Cylinder* cylinder = new Cylinder(cylinderHeight, RADIUS_PIPE);
-//        cylinder->init(viewer);
-//        this->cylinders.push_back(cylinder);
-//    }
     tube->init(viewer);
     viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
     viewer.manipulatedFrame()->setPosition(getPosition());

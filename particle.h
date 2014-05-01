@@ -7,7 +7,7 @@ using namespace qglviewer;  // to use class Vec of the qglviewer lib
 
 class Particle
 {
-private:
+protected:
 	Vec position;
 	Vec velocity;
 	double mass; 
@@ -30,6 +30,7 @@ public:
 	void incrVelocity(const Vec &vel);	// velocity += vel
 	
 	void draw() const;
+        double distance(Particle* p);
 };
 
 // output stream operator, as non-member
