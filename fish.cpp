@@ -224,26 +224,26 @@ void Fish::draw() const {
     glColor3f(colour[0], colour[1], colour[2]);
     float velRatio = magnitud(velocity) / MAX_VELOCITY;
     glPushMatrix();
-
+    
     // Head
     glRotatef(velRatio * 0.8 * swimAngle, 0, 1, 0);
-    glutSolidCone(0.2, 0.4, 5, 1);
+    glutSolidCone(radius/2, 2*height/5, 5, 1);
 
     // Body
     glRotatef(180 - velRatio * swimAngle, 0, 1, 0);
-    glutSolidCone(0.1, 0.5, 5, 1);
+    glutSolidCone(radius/4, height/2, 5, 1);
     glPushMatrix();
     glTranslatef(0, 0, 0.1);
     glRotatef(-65, 1, 0, 0);
-    glutSolidCone(0.08, 0.3, 5, 1);
+    glutSolidCone(radius/6, 2*height/7, 5, 1);
     glPopMatrix();
 
     // Tail
-    glTranslatef(0, 0, 0.5);
+    glTranslatef(0, 0, height/2);
     glRotatef(180 + velRatio * 1.2 * swimAngle, 0, 1, 0);
-    glTranslatef(0, 0, -0.2);
+    glTranslatef(0, 0, -height/5);
     glScalef(0.5, 1, 1);
-    glutSolidCone(0.2, 0.2, 5, 1);
+    glutSolidCone(radius/2, height/5, 5, 1);
     glPopMatrix();
 
     glPopMatrix();
