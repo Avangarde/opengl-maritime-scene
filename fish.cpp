@@ -1,20 +1,256 @@
 #include "fish.h"
+#include "vec.h"
+#include <math.h>
 
+#define MAX_VELOCITY 20
+#define SWIM_ANGLE_DELTA_MAG 4
+#define SWIM_ANGLE_MAX 30
+#define FOV_RADIUS 3
+#define FOV_ANGLE 110 
+#define MAX_PRIORITY_CONTROL 1 
 
-Fish::Fish(Vec pos, Vec vel, double m, double r, double h)
-: Particle(pos, vel, m, r){
+Fish::Fish(Vec pos, Vec vel, Vec dir, double m, double r, double h)
+: Particle(pos, vel, m, r), direction(dir) {
+    normalize(direction);
     height = h;
+    colour = Vec(0.3, 0.5, 0.3);
+    swimAngle = (2 * SWIM_ANGLE_MAX) * (rand() / (float) RAND_MAX) - SWIM_ANGLE_MAX;
+    swimAngleDelta = SWIM_ANGLE_DELTA_MAG;
 }
 
 Fish::~Fish() {
 }
 
-void Fish::draw() const
-{
-	glPushMatrix();
-	glTranslatef(position.x, position.y, position.z);
-        glRotatef(90.0, 1.0, 0.0, 1.0);
-	//glutSolidCone(radius, height, 12, 12);
-        glutSolidSphere(radius, 12, 12);
-	glPopMatrix();
+const Vec & Fish::getColour() const {
+    return colour;
+}
+
+void Fish::setColour(const Vec &col) {
+    colour = col;
+}
+
+void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec globalGoal) {
+    // Global Goal
+    lineToGoal = globalGoal - position;
+
+    goalSeekDir = globalGoal - position;
+    normalize(goalSeekDir);
+    goalSeekDir *= 1/dt;
+
+    cout << "fish: " << schoolID << "\n";
+    cout << "oldPos: " << position << "\n";
+    cout << "oldVel: " << velocity << "\n";
+    cout << "goal: " << globalGoal << "\n";
+    cout << "lineToGoal: " << lineToGoal << "\n";
+    cout << "goalSeekDir: " << goalSeekDir << "\n";
+
+    // Local Neighbourhood
+
+    int numNeighbours = 0;
+    float smallestCloseNeighDist = radius;
+    separationDir = Vec();
+/*
+    for (unsigned int i = 0; i < school.size(); i++) {
+        if (schoolID != i) { // Don't influence yourself
+
+
+            Vec neighbourDir = school[i]->direction;
+            float neighbourDist = magnitud(neighbourDir);
+
+            if ((neighbourDist < FOV_RADIUS) &&
+                    (rad2deg(acos(dot(norm(neighbourDir), direction))) < FOV_ANGLE)) { // Is it a neighbour?
+
+                numNeighbours++;
+
+                // Work for Separation
+                if (neighbourDist < radius) {
+                    separationDir -= norm(neighbourDir) * pow(1 - (neighbourDist / radius), 2);
+                    if (neighbourDist < smallestCloseNeighDist) smallestCloseNeighDist = neighbourDist;
+                }
+
+                // Work for Velocity Matching
+                avgNeighbourVel += school[i]->velocity;
+
+                // Work for Flock Centering
+                avgNeighbourPos += school[i]->position;
+
+            }
+
+        }
+    }
+*/
+    // Separation Influence
+    float priorityControl = 0;
+    float centeringPriority = 0;
+    float separationPriority = 0;
+    float velMatchPriority = 0;
+
+
+    if ((numNeighbours > 0)) {
+        separationPriority = pow(1 - (smallestCloseNeighDist / radius), 3);
+        priorityControl += separationPriority;
+    }
+
+    // Velocity Matching Influence
+    if ((numNeighbours > 0) &&
+            (priorityControl < MAX_PRIORITY_CONTROL)) {
+
+        Vec avgVel = avgNeighbourVel / numNeighbours;
+        float diffAngle = rad2deg(acos(dot(norm(avgVel), norm(velocity))));
+        velMatchDir = (avgNeighbourVel / numNeighbours) - velocity;
+        velMatchPriority = pow(diffAngle / 180.0, 2);
+
+        if (velMatchPriority + priorityControl > MAX_PRIORITY_CONTROL) {
+            velMatchPriority = MAX_PRIORITY_CONTROL - priorityControl;
+            priorityControl = 0.01;
+        } else {
+            priorityControl += centeringPriority;
+        }
+    }
+
+    // Centering Influence
+    if ((numNeighbours > 0) &&
+            (priorityControl < MAX_PRIORITY_CONTROL)) {
+        centeringDir = (avgNeighbourPos / numNeighbours) - position;
+        centeringPriority = pow(magnitud(centeringDir) / 20, 2);
+        if (centeringPriority + priorityControl > MAX_PRIORITY_CONTROL) {
+            centeringPriority = MAX_PRIORITY_CONTROL - priorityControl;
+            priorityControl = MAX_PRIORITY_CONTROL;
+        } else {
+            priorityControl += centeringPriority;
+        }
+    }
+
+    // Final Target Direction
+    if (schoolID == 0) {
+
+        targetDir = (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir;
+
+    } else {
+
+        targetDir = separationPriority * separationDir +
+                velMatchPriority * velMatchDir +
+                centeringPriority * centeringDir +
+                (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir; /// Aim to goal with remaining priority
+    }
+
+//    if (magnitud(targetDir) > 1) targetDir *= (1 / magnitud(targetDir));
+
+    // Arrival
+    float modMax;
+    if (magnitud(lineToGoal) < radius) {
+        modMax = pow((magnitud(lineToGoal) / radius) * MAX_VELOCITY, 2);
+    } else {
+        modMax = MAX_VELOCITY;
+    }
+
+    Vec oldVel = velocity;
+    incrVelocity(targetDir * dt);
+    if (magnitud(velocity) > modMax) velocity *= (modMax / magnitud(velocity)); // Truncate velocity
+    incrPosition(oldVel * dt);
+
+    if (velocity[0] != 0 ||
+            velocity[1] != 0 ||
+            velocity[2] != 0) {
+        direction = oldVel * dt;
+        normalize(direction);
+    }
+
+    cout << "target: " << targetDir << "\n";
+    cout << "newPos: " << position << "\n";
+    cout << "newVel: " << velocity << "\n";
+    cout << "newDir: " << direction << "\n";
+
+    // Update Swim Angle
+    if (swimAngle >= SWIM_ANGLE_MAX) swimAngleDelta *= -1;
+    if (swimAngle <= -SWIM_ANGLE_MAX) swimAngleDelta *= -1;
+    swimAngle += swimAngleDelta;
+
+}
+
+void Fish::draw() const {
+    glPushMatrix();
+    glTranslatef(position.x, position.y, position.z);
+
+/*
+
+    // Line To Goal Direction
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(lineToGoal[0], lineToGoal[1], lineToGoal[2]);
+    glEnd();
+
+    // Goal Seek Direction
+    glColor3f(0.0, 1.0, 0.0);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(goalSeekDir[0], goalSeekDir[1], goalSeekDir[2]);
+    glEnd();
+
+    // Direction Vector
+    glColor3f(1.0, 1.0, 1.0);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(direction[0], direction[1], direction[2]);
+    glEnd();
+
+*/
+
+
+    // Rotate to point in direction
+    float xzLen = sqrt(direction[0] * direction[0] + direction[2] * direction[2]);
+    float yRot, xRot;
+    if (xzLen == 0) {
+
+        if (direction[0] > 0)
+            yRot = 90;
+        else
+            yRot = -90;
+
+    } else {
+
+        yRot = rad2deg(acos(direction[2] / xzLen));
+
+    }
+    xRot = rad2deg(acos(xzLen));
+    if (direction[1] > 0) xRot *= -1;
+    if (direction[0] < 0) yRot *= -1;
+
+    glRotatef(yRot, 0, 1, 0);
+    glRotatef(xRot, 1, 0, 0);
+
+    // Draw "Fish"
+    glColor3f(colour[0], colour[1], colour[2]);
+    float velRatio = magnitud(velocity) / MAX_VELOCITY;
+    glPushMatrix();
+
+    // Head
+    glRotatef(velRatio * 0.8 * swimAngle, 0, 1, 0);
+    glutSolidCone(0.2, 0.4, 5, 1);
+
+    // Body
+    glRotatef(180 - velRatio * swimAngle, 0, 1, 0);
+    glutSolidCone(0.1, 0.5, 5, 1);
+    glPushMatrix();
+    glTranslatef(0, 0, 0.1);
+    glRotatef(-65, 1, 0, 0);
+    glutSolidCone(0.08, 0.3, 5, 1);
+    glPopMatrix();
+
+    // Tail
+    glTranslatef(0, 0, 0.5);
+    glRotatef(180 + velRatio * 1.2 * swimAngle, 0, 1, 0);
+    glTranslatef(0, 0, -0.2);
+    glScalef(0.5, 1, 1);
+    glutSolidCone(0.2, 0.2, 5, 1);
+    glPopMatrix();
+
+    glPopMatrix();
+
+
+
+
+
+
 }

@@ -1,8 +1,11 @@
 #include "viewer.h"
 #include "dynamicSystem.h"
 
+Vec goal;
+int step = 0;
+
 DynamicSystem::DynamicSystem(Terrain * terrain)
-: defaultMediumViscosity(0.5), dt(0.01), fishMass(1.0), defaultGravity(0.0, 0.0, -10.0) {
+: defaultMediumViscosity(0.5), dt(0.05), fishMass(1.0), defaultGravity(0.0, 0.0, -10.0) {
     this->terrain = terrain;
 }
 
@@ -34,15 +37,27 @@ void DynamicSystem::init(Viewer&) {
     gravity = defaultGravity;
     defaultMediumViscosity = 1.0;
     mediumViscosity = defaultMediumViscosity;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
         Vec initPos = Vec(((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*20);
-        Vec initVel = Vec(((double) rand() / RAND_MAX)*100 - 50, ((double) rand() / RAND_MAX)*100 - 50, ((double) rand() / RAND_MAX)*100 - 50);
-        fishes.push_back(new Fish(initPos, initVel, fishMass, 1.0, 2.0));
+        Vec initVel = Vec(((double) rand() / RAND_MAX)*20 - 10, ((double) rand() / RAND_MAX)*20 - 10, ((double) rand() / RAND_MAX)*20 - 10);
+        Vec initDir = initVel;
+        fishes.push_back(new Fish(initPos, initVel, initDir, fishMass, 2.0, 4.0));
     }
+    fishes[0]->setColour(Vec(1, 0.5, 0.5));
+    fishes[0]->setPosition(Vec(10, 10, 10));
+    goal = Vec(0, 0, 40);
 }
 
 void DynamicSystem::draw() {
+
+    // Draw Goal
+    glPushMatrix();
     glColor3f(1, 0, 0);
+    glTranslatef(goal[0], goal[1], goal[2]);
+    glutSolidSphere(0.1, 6, 6);
+    glPopMatrix();
+
+
     vector<Fish *>::iterator itP;
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         (*itP)->draw();
@@ -50,8 +65,12 @@ void DynamicSystem::draw() {
 }
 
 void DynamicSystem::animate() {
+
+
+
     map<const Fish *, Vec> forces;
     vector<Fish *>::iterator itP;
+    /*
     // forces
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         Fish *f = *itP;
@@ -67,27 +86,44 @@ void DynamicSystem::animate() {
         // q = q + dt * v
         f->incrPosition(dt * f->getVelocity());
     }
-
+     */
     //Collisions
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         Fish *f = *itP;
         collisionLimits(f);
         collisionParticleGround(f);
     }
-
-    for (unsigned int i = 1; i < fishes.size(); ++i) {
-        for (unsigned int j = i; j < fishes.size(); ++j) {
-            Fish *f1 = fishes[i - 1];
-            Fish *f2 = fishes[j];
-            collisionFish(f1, f2);
+/*
+    for (unsigned int i = 0; i < fishes.size(); ++i) {
+        for (unsigned int j = 0; j < fishes.size(); ++j) {
+            if (i != j) {
+                Fish *f1 = fishes[i];
+                Fish *f2 = fishes[j];
+                collisionFish(f1, f2);
+            }
         }
+    }
+*/
+
+
+
+    fishes[0]->animate((float) dt, 0, fishes, goal);
+    for (unsigned int i = 1; i < fishes.size(); i++) {
+        fishes[i]->animate(dt, i, fishes, fishes[0]->getPosition());
+    }
+
+    step++;
+    if (step % 100 == 0) {
+        goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
+        goal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
+        goal[2] = (terrain->size * 2 * (rand() / (float) RAND_MAX));
+        goal *= 0.9;
     }
 
 
 }
 
 void DynamicSystem::collisionParticleGround(Particle *p) {
-    // don't process fixed particles (ground plane is fixed)
     if (p->getInvMass() == 0)
         return;
     int xPos = p->getPosition().x / 4 + terrain->size / 2;
@@ -115,14 +151,14 @@ void DynamicSystem::collisionLimits(Particle *p) {
     int size = terrain->size;
     if (xPos <= -size * 2 || xPos >= size * 2
             || yPos <= -size * 2 || yPos >= size * 2
-            || zPos <= 0 || zPos >= size*2) {
+            || zPos <= 0 || zPos >= size * 2) {
         p->setVelocity(p->getVelocity()*-1);
         p->incrPosition(p->getVelocity());
     }
 }
 
 void DynamicSystem::collisionFish(Fish* f1, Fish* f2) {
-    if (f1->distance(f2) <= f1->getRadius()) {
+    if (f1->distance(f2) <= 0) {
         f1->setVelocity(f1->getVelocity()*-1);
         f2->setVelocity(f2->getVelocity()*-1);
     }

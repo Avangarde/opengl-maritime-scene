@@ -14,10 +14,21 @@ void Cylinder::init(Viewer&) {
     for (int i = 0; i <= NO_POINTS; ++i) {
         t = 2 * M_PI * (float) (i) / (float) NO_POINTS;
         s = 2 * M_PI * (float) (i + 1) / (float) NO_POINTS;
-        cylinderPoints[i][0] = {cos(t) * radius, sin(t) * radius, -height};
-        cylinderPoints[i][1] = {cos(s) * radius, sin(s) * radius, -height};
-        cylinderPoints[i][2] = {cos(t) * radius, sin(t) * radius, height};
-        cylinderPoints[i][3] = {cos(s) * radius, sin(s) * radius, height};
+        // First corner cylinderPoints[i][0][0] = cos(t) * radius; 
+        cylinderPoints[i][0][1] = sin(t) * radius;
+        cylinderPoints[i][0][2] = -height;
+        // Second corner 
+        cylinderPoints[i][1][0] = cos(s) * radius;
+        cylinderPoints[i][1][1] = sin(s) * radius;
+        cylinderPoints[i][1][2] = -height;
+        // Third corner 
+        cylinderPoints[i][2][0] = cos(t) * radius;
+        cylinderPoints[i][2][1] = sin(t) * radius;
+        cylinderPoints[i][2][2] = height;
+        // Fourth corner 
+        cylinderPoints[i][3][0] = cos(s) * radius;
+        cylinderPoints[i][3][1] = sin(s) * radius;
+        cylinderPoints[i][3][2] = height;
     }
 }
 
