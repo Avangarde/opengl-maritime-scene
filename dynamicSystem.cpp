@@ -5,7 +5,7 @@ Vec goal;
 int step = 0;
 
 DynamicSystem::DynamicSystem(Terrain * terrain)
-: defaultMediumViscosity(0.5), dt(0.01), fishMass(1.0), defaultGravity(0.0, 0.0, -10.0),terrain(terrain) {
+: defaultMediumViscosity(0.5), dt(0.05), fishMass(1.0), defaultGravity(0.0, 0.0, -10.0),terrain(terrain) {
     //this->terrain = terrain;
 }
 
