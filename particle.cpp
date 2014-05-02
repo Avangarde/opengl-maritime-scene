@@ -67,9 +67,6 @@ void Particle::incrVelocity(const Vec &vel)
 	velocity += vel;
 }
 
-
-
-
 void Particle::draw() const
 {
 	glPushMatrix();

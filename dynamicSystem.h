@@ -10,13 +10,15 @@
 
 #include <vector>
 using namespace std;
-#include "renderable.h"
 #include "fish.h"
+#include "human.h"
+#include "renderable.h"
 #include "terrain.h"
 
 class DynamicSystem : public Renderable {
 private:
     
+    Human* human;
     Terrain* terrain;
     
     vector<Fish *> fishes;
@@ -38,19 +40,19 @@ private:
     void collisionFish(Fish *f1, Fish *f2);
 
 public:
-    DynamicSystem(Terrain *);
+    DynamicSystem(Terrain *,Human *);
     virtual ~DynamicSystem();
 
     void setGravity(bool onOff);
     void setViscosity(bool onOff);
-
+    
     void init(Viewer &);
     void draw();
     void animate();
     // event response
     void keyPressEvent(QKeyEvent*, Viewer&);
     void mouseMoveEvent(QMouseEvent*, Viewer&);
-
+    
 };
 
 #endif	/* DYNAMIC_SYSTEM_H */

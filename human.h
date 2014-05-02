@@ -37,8 +37,8 @@ public:
     void draw();
     void init(Viewer&);
     virtual void animate();
-    void keyPressEvent(QKeyEvent*, Viewer&);
-    void mouseMoveEvent(QMouseEvent*, Viewer&);
+//    void keyPressEvent(QKeyEvent*, Viewer&);
+//    void mouseMoveEvent(QMouseEvent*, Viewer&);
     void setScale(float scale);
     float getScale() const;
     Vec getPosition() const {
@@ -48,7 +48,9 @@ public:
     void setPosition(Vec position) {
         this->position = position;
     }
-
+    
+    Tube* getTube() const;
+    void setTube(Tube* tube);
 
 private:
     static const int PRECISION = 20;

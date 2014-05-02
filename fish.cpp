@@ -37,13 +37,6 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
     normalize(goalSeekDir);
     goalSeekDir *= 1/dt;
 
-    cout << "fish: " << schoolID << "\n";
-    cout << "oldPos: " << position << "\n";
-    cout << "oldVel: " << velocity << "\n";
-    cout << "goal: " << globalGoal << "\n";
-    cout << "lineToGoal: " << lineToGoal << "\n";
-    cout << "goalSeekDir: " << goalSeekDir << "\n";
-
     // Local Neighbourhood
 
     int numNeighbours = 0;
@@ -156,11 +149,6 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
         normalize(direction);
     }
 
-    cout << "target: " << targetDir << "\n";
-    cout << "newPos: " << position << "\n";
-    cout << "newVel: " << velocity << "\n";
-    cout << "newDir: " << direction << "\n";
-
     // Update Swim Angle
     if (swimAngle >= SWIM_ANGLE_MAX) swimAngleDelta *= -1;
     if (swimAngle <= -SWIM_ANGLE_MAX) swimAngleDelta *= -1;
@@ -171,32 +159,6 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 void Fish::draw() const {
     glPushMatrix();
     glTranslatef(position.x, position.y, position.z);
-
-/*
-
-    // Line To Goal Direction
-    glColor3f(1.0, 0.0, 0.0);
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(lineToGoal[0], lineToGoal[1], lineToGoal[2]);
-    glEnd();
-
-    // Goal Seek Direction
-    glColor3f(0.0, 1.0, 0.0);
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(goalSeekDir[0], goalSeekDir[1], goalSeekDir[2]);
-    glEnd();
-
-    // Direction Vector
-    glColor3f(1.0, 1.0, 1.0);
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(direction[0], direction[1], direction[2]);
-    glEnd();
-
-*/
-
 
     // Rotate to point in direction
     float xzLen = sqrt(direction[0] * direction[0] + direction[2] * direction[2]);

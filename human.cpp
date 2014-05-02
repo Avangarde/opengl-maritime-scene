@@ -15,13 +15,25 @@ void Human::setScale(float scale) {
     this->scale = scale;
 }
 
+Tube* Human::getTube() const {
+    return tube;
+}
+
+void Human::setTube(Tube* tube) {
+    this->tube = tube;
+}
+
 void Human::init(Viewer& viewer) {
     tube->init(viewer);
-    viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
-    viewer.manipulatedFrame()->setPosition(getPosition());
 }
 
 void Human::draw() {
+    glPushMatrix();
+    {
+        glColor3b(119.0f, 136.0f, 153.0f);
+        tube->draw();
+    }
+    glPopMatrix();
     glPushMatrix();
     {
         //glRotatef(90, 1, 0, 0);
@@ -112,28 +124,6 @@ void Human::drawHead() {
     {
         glColor3f(1.0f, 0.64f, 0.52f);
         glutSolidSphere(HEAD_RADIUS, PRECISION, PRECISION);
-        tube->draw();
-//        //this->springs.push_back(new Spring(pipes.back(), particle1, 1, 1, 1));
-//        float cylinderHeight = beginningPipe.z / (float) PRECISION_PIPE;
-//        Vec initPos = Vec(0.0, 0.0, cylinderHeight / 2);
-//        vector<Cylinder *>::iterator itP;
-//        for (itP = cylinders.begin(); itP != cylinders.end(); ++itP) {
-//            glPushMatrix();
-//            {
-//                glTranslatef(initPos.x, initPos.y, initPos.z);
-//                (*itP)->draw();
-//            }
-//            glPopMatrix();
-//            initPos += this->beginningPipe / (float) PRECISION_PIPE;
-//        }
-//        // Springs
-//        /**glColor3f(1.0, 0.28, 0.0);
-//        glLineWidth(5.0);
-//        vector<Spring *>::iterator itS;
-//        for (itS = springs.begin(); itS != springs.end(); ++itS) {
-//            cout << "Drawing Spring\n";
-//            (*itS)->draw();
-//        }*/
     }
     glPopMatrix();
 }
@@ -313,16 +303,16 @@ void Human::drawFoot() {
     glPopMatrix();
 }
 
-void Human::mouseMoveEvent(QMouseEvent*, Viewer& v) {
-    setPosition(v.manipulatedFrame()->position());
-}
-
-void Human::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
-    const Qt::KeyboardModifiers modifiers = e->modifiers();
-    if ((e->key() == Qt::Key_R) && (modifiers == Qt::NoButton)) {
-        // stop the animation, and reinit the scene
-        viewer.stopAnimation();
-        init(viewer);
-        viewer.manipulatedFrame()->setPosition(getPosition());
-    }
-}
+//void Human::mouseMoveEvent(QMouseEvent*, Viewer& v) {
+//    setPosition(v.manipulatedFrame()->position());
+//}
+//
+//void Human::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
+//    const Qt::KeyboardModifiers modifiers = e->modifiers();
+//    if ((e->key() == Qt::Key_R) && (modifiers == Qt::NoButton)) {
+//        // stop the animation, and reinit the scene
+//        viewer.stopAnimation();
+//        init(viewer);
+//        viewer.manipulatedFrame()->setPosition(getPosition());
+//    }
+//}

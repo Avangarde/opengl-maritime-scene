@@ -56,7 +56,6 @@ void Viewer::init() {
     for (it = renderableList.begin(); it != renderableList.end(); ++it) {
         (*it)->init(*this);
     }
-    startAnimation();
 }
 
 void Viewer::draw() {

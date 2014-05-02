@@ -17,6 +17,7 @@
 #include "renderable.h"
 
 #define PI 3.14159265
+#define RADIUS_SCENE 95
 
 class Landscape : public Renderable {
 public:

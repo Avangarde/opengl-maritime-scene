@@ -85,7 +85,7 @@ void Landscape::draw() {
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
-    int radius = 95;
+    int radius = RADIUS_SCENE;
 
     double x, y, z;
 

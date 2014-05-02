@@ -20,14 +20,15 @@ void Tube::init(Viewer& viewer) {
     float cylinderHeight = beginningTube.z / (float) PRECISION_PIPE;
     Vec initPos = beginningTube;
     for (int i = 0; i < PRECISION_PIPE; i++) {
+        initPos.z -= cylinderHeight;
         Cylinder* cylinder = new Cylinder(cylinderHeight, RADIUS_PIPE);
         cylinder->init(viewer);
         this->cylinders.push_back(cylinder);
-        Particle * particle1 = new Particle(initPos, Vec(), 1.0, 0.1);
+        Particle * particle1 = new Particle(initPos, Vec(), 0.5, 0.1);
         if (i != 0)
-            springs.push_back(new Spring(particles.back(), particle1, 1, 1, 1));
+            springs.push_back(new Spring(particles.back(), particle1, PRECISION_PIPE*.55, cylinderHeight/(PRECISION_PIPE*4), 1));
         this->particles.push_back(particle1);
-        initPos.z -= cylinderHeight;
+        
     }
     Particle * particle1 = new Particle(initPos, Vec(), 1.0, 0.1);
     springs.push_back(new Spring(particles.back(), particle1, 1, 1, 1));
@@ -39,18 +40,17 @@ void Tube::draw() {
     Vec initPos = Vec(0.0, 0.0, cylinderHeight / 2);
     vector<Cylinder *>::iterator itC;
     vector<Particle *>::iterator itP;
-    Vec pos0, pos1, posm;
     for (size_t p = 0, c = 0;
             p < getParticles().size() - 1 && c < getCylinders().size();
-            p++, c++) {
+            p++, c++) { 
         Particle *part1 = getParticles()[p];
         Particle *part2 = getParticles()[p + 1];
         Cylinder *cyl = getCylinders()[c];
-        pos0 = part1->getPosition();
-        pos1 = part2->getPosition();
-        posm = pos0 + 0.5f * (pos1 - pos0);
+        Vec pos0 = part1->getPosition();
+        Vec pos1 = part2->getPosition();
+        Vec posm = pos0 + 0.5f * (pos1 - pos0);
         Vec vDir = pos1 - pos0;
-
+        
         float num = abs(Utils::crossProduct(vDir, Vec(0.0, 1.0, 0.0)));
         float den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(0.0, 1.0, 0.0));
         float angleZX = asin(num / den)*(180 / M_PI);
@@ -82,7 +82,6 @@ void Tube::draw() {
         initPos += this->beginningTube / (float) PRECISION_PIPE;
     }
     getParticles().back()->draw();
-    getCylinders().back()->draw();
     //Springs
     glColor3f(1.0, 0.28, 0.0);
     glLineWidth(5.0);
