@@ -104,7 +104,6 @@ void DynamicSystem::animate() {
         goal[1] *= factor;
         step = 1;
     }
-    cout<<step<<"\n";
 
 }
 
