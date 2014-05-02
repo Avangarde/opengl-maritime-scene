@@ -1,12 +1,12 @@
 #include "viewer.h"
 #include "dynamicSystem.h"
 
-Vec goal;
-int step = 0;
+
 
 DynamicSystem::DynamicSystem(Terrain * terrain)
 : defaultMediumViscosity(1.0), dt(0.05), fishMass(1.0), defaultGravity(0.0, 0.0, -10.0), terrain(terrain) {
     //this->terrain = terrain;
+    step = 0;
 }
 
 DynamicSystem::~DynamicSystem() {
@@ -44,19 +44,11 @@ void DynamicSystem::init(Viewer&) {
         fishes.push_back(new Fish(initPos, initVel, initDir, fishMass, 2.0, 4.0));
     }
     fishes[0]->setColour(Vec(1.0, 0.0, 0.0));
-    fishes[0]->setPosition(Vec(10, 10, 10));
-    goal = Vec(0, 0, 40);
+    fishes[0]->setPosition(Vec(0, 0, 10));
+    goal = Vec(40, 40, 10);
 }
 
 void DynamicSystem::draw() {
-
-    // Draw Goal
-    glPushMatrix();
-    glColor3f(1, 0, 0);
-    glTranslatef(goal[0], goal[1], goal[2]);
-    glutSolidSphere(0.1, 6, 6);
-    glPopMatrix();
-
 
     vector<Fish *>::iterator itP;
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
@@ -102,7 +94,7 @@ void DynamicSystem::animate() {
     }
 
     step++;
-    if (step % 100 == 0) {
+    if (step == 100 ) {
         goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[2] = (terrain->size * 1.5 * (rand() / (float) RAND_MAX));
@@ -110,8 +102,9 @@ void DynamicSystem::animate() {
         float factor = ((terrain->size * 2) - goal[2]) / (terrain->size * 2);
         goal[0] *= factor;
         goal[1] *= factor;
+        step = 1;
     }
-
+    cout<<step<<"\n";
 
 }
 
