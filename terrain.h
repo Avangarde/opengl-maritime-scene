@@ -38,6 +38,8 @@ public:
     qglviewer::Vec getNormal(int, int);
 
     void draw();
+    void drawTerrain();
+    void animate();
 
     double scale(double x) {
         return x * (((double) rand() / RAND_MAX) - 0.5);

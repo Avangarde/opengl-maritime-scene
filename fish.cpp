@@ -13,7 +13,7 @@ Fish::Fish(Vec pos, Vec vel, Vec dir, double m, double r, double h)
 : Particle(pos, vel, m, r), direction(dir) {
     normalize(direction);
     height = h;
-    colour = Vec(0.3, 0.5, 0.3);
+    colour = Vec((rand() / (float) RAND_MAX), (rand() / (float) RAND_MAX), (rand() / (float) RAND_MAX));
     swimAngle = (2 * SWIM_ANGLE_MAX) * (rand() / (float) RAND_MAX) - SWIM_ANGLE_MAX;
     swimAngleDelta = SWIM_ANGLE_DELTA_MAG;
 }
@@ -42,12 +42,12 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
     int numNeighbours = 0;
     float smallestCloseNeighDist = radius;
     separationDir = Vec();
-/*
+
     for (unsigned int i = 0; i < school.size(); i++) {
         if (schoolID != i) { // Don't influence yourself
 
 
-            Vec neighbourDir = school[i]->direction;
+            Vec neighbourDir = school[i]->position - position;
             float neighbourDist = magnitud(neighbourDir);
 
             if ((neighbourDist < FOV_RADIUS) &&
@@ -71,7 +71,8 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 
         }
     }
-*/
+    
+
     // Separation Influence
     float priorityControl = 0;
     float centeringPriority = 0;
@@ -116,15 +117,12 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 
     // Final Target Direction
     if (schoolID == 0) {
-
         targetDir = (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir;
-
     } else {
-
         targetDir = separationPriority * separationDir +
                 velMatchPriority * velMatchDir +
                 centeringPriority * centeringDir +
-                (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir; /// Aim to goal with remaining priority
+                (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir;
     }
 
 //    if (magnitud(targetDir) > 1) targetDir *= (1 / magnitud(targetDir));

@@ -30,6 +30,8 @@ private:
     double dt;    
 
     double fishMass;
+    Vec goal;
+    int step;
 
     bool toggleGravity;
     bool toggleViscosity;

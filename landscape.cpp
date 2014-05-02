@@ -75,7 +75,7 @@ void Landscape::init(Viewer&) {
     glFogf(GL_FOG_END, 5.0f);
     glEnable(GL_FOG);
 
-    glClearColor(0.0f, 0.0f, 0.6f, 1.0f);
+    glClearColor(fogColor[0], fogColor[1], fogColor[2], fogColor[3]);
 
 }
 
@@ -119,15 +119,16 @@ void Landscape::draw() {
             p2[1] = y;
             p2[2] = z;
 
-            x = radius * sin(PI / 180 * theta + 10) * cos(PI / 180 * (phi));
-            y = radius * cos(PI / 180 * theta + 10) * cos(PI / 180 * (phi));
-            z = radius * sin(PI / 180 * (phi + 10.0));
+            x = radius * sin(PI / 180 * theta + 10) * cos(PI / 180 * phi);
+            y = radius * cos(PI / 180 * theta + 10) * cos(PI / 180 * phi);
+            z = radius * sin(PI / 180 * phi);
 
             p3[0] = x;
             p3[1] = y;
             p3[2] = z;
 
-            //double * norm = normal(p1, p2, p3);
+//            double * norm = normal(p1, p2, p3);
+//            glNormal3d(norm[0], norm[1], norm[2]);
             glNormal3d(0.0, 0.0, 1.0);
 
             glTexCoord3f(X, Z, Y);
@@ -145,4 +146,3 @@ void Landscape::draw() {
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
 }
-
