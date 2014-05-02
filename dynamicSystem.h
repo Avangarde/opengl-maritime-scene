@@ -25,8 +25,7 @@ private:
     Vec gravity;
     double defaultMediumViscosity;
     double mediumViscosity;
-    double dt;
-    
+    double dt;    
 
     double fishMass;
 

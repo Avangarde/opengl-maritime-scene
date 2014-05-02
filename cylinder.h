@@ -1,12 +1,15 @@
 #ifndef _CYLINDER_
 #define _CYLINDER_
 
-#include "renderable.h"
-#include "viewer.h"
+
+
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
+#include "renderable.h"
+#include "viewer.h"
+#include <QGLViewer/vec.h>
 #endif
 #ifndef M_PI
 #define M_PI 3.14159265
@@ -14,15 +17,54 @@
 //Define the NO_POINTS
 const int NO_POINTS = 16;
 
+using namespace qglviewer;
+
 class Cylinder : public Renderable {
 public:
     Cylinder(float height, float radius);
+    Cylinder(Vec pos, float height, float radius);
     void init(Viewer&);
     void draw();
+
+    float getAngleXY() {
+        return angleXZ;
+    }
+
+    void setAngleXY(float angleXY) {
+        Cylinder::angleXZ = angleXY;
+    }
+
+    float getAngleYZ() const {
+        return angleYZ;
+    }
+
+    void setAngleYZ(float angleYZ) {
+        this->angleYZ = angleYZ;
+    }
+
+    Vec getPosition() const {
+        return position;
+    }
+
+    void setPosition(Vec position) {
+        this->position = position;
+    }
+
+    float getHeight() const {
+        return height;
+    }
+
+    void setHeight(float height) {
+        this->height = height;
+    }
 
 private:
     float height;
     float radius;
+    float angleXZ;
+    float angleYZ;
+    Vec position;
+
     void drawImmediate();
     void drawElements();
     void drawArrays();

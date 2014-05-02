@@ -26,7 +26,7 @@ public:
 
 private:
     void loadTexture(const char *filename);
-    GLuint texture;
+        GLuint texture;
 };
 
 #endif	/* LANDSCAPE_H */
