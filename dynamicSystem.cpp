@@ -5,7 +5,7 @@ Vec goal;
 int step = 0;
 
 DynamicSystem::DynamicSystem(Terrain * terrain)
-: defaultMediumViscosity(0.5), dt(0.05), fishMass(1.0), defaultGravity(0.0, 0.0, -10.0),terrain(terrain) {
+: defaultMediumViscosity(1.0), dt(0.05), fishMass(1.0), defaultGravity(0.0, 0.0, -10.0), terrain(terrain) {
     //this->terrain = terrain;
 }
 
@@ -43,7 +43,7 @@ void DynamicSystem::init(Viewer&) {
         Vec initDir = initVel;
         fishes.push_back(new Fish(initPos, initVel, initDir, fishMass, 2.0, 4.0));
     }
-    fishes[0]->setColour(Vec(1, 0.5, 0.5));
+    fishes[0]->setColour(Vec(1.0, 0.0, 0.0));
     fishes[0]->setPosition(Vec(10, 10, 10));
     goal = Vec(0, 0, 40);
 }
@@ -70,11 +70,11 @@ void DynamicSystem::animate() {
 
     map<const Fish *, Vec> forces;
     vector<Fish *>::iterator itP;
-    /*
+    
     // forces
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         Fish *f = *itP;
-        forces[f] = (-mediumViscosity * f->getVelocity()) + f->getVelocity();
+        forces[f] = (-mediumViscosity * f->getVelocity()); /*+ gravity * f->getMass();*/
     }
 
     // update particles velocity
@@ -86,38 +86,30 @@ void DynamicSystem::animate() {
         // q = q + dt * v
         f->incrPosition(dt * f->getVelocity());
     }
-     */
+    
     //Collisions
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         Fish *f = *itP;
         collisionLimits(f);
         collisionParticleGround(f);
     }
-/*
-    for (unsigned int i = 0; i < fishes.size(); ++i) {
-        for (unsigned int j = 0; j < fishes.size(); ++j) {
-            if (i != j) {
-                Fish *f1 = fishes[i];
-                Fish *f2 = fishes[j];
-                collisionFish(f1, f2);
-            }
-        }
-    }
-*/
 
 
-
+    Vec goalSchool = fishes[0]->getPosition();
     fishes[0]->animate((float) dt, 0, fishes, goal);
     for (unsigned int i = 1; i < fishes.size(); i++) {
-        fishes[i]->animate(dt, i, fishes, fishes[0]->getPosition());
+        fishes[i]->animate(dt, i, fishes, goalSchool);
     }
 
     step++;
     if (step % 100 == 0) {
         goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
-        goal[2] = (terrain->size * 2 * (rand() / (float) RAND_MAX));
-        goal *= 0.9;
+        goal[2] = (terrain->size * 1.5 * (rand() / (float) RAND_MAX));
+        goal *= 0.95;
+        float factor = ((terrain->size * 2) - goal[2]) / (terrain->size * 2);
+        goal[0] *= factor;
+        goal[1] *= factor;
     }
 
 
@@ -154,13 +146,6 @@ void DynamicSystem::collisionLimits(Particle *p) {
             || zPos <= 0 || zPos >= size * 2) {
         p->setVelocity(p->getVelocity()*-1);
         p->incrPosition(p->getVelocity());
-    }
-}
-
-void DynamicSystem::collisionFish(Fish* f1, Fish* f2) {
-    if (f1->distance(f2) <= 0) {
-        f1->setVelocity(f1->getVelocity()*-1);
-        f2->setVelocity(f2->getVelocity()*-1);
     }
 }
 

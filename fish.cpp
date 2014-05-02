@@ -13,7 +13,7 @@ Fish::Fish(Vec pos, Vec vel, Vec dir, double m, double r, double h)
 : Particle(pos, vel, m, r), direction(dir) {
     normalize(direction);
     height = h;
-    colour = Vec(0.3, 0.5, 0.3);
+    colour = Vec((rand() / (float) RAND_MAX), (rand() / (float) RAND_MAX), (rand() / (float) RAND_MAX));
     swimAngle = (2 * SWIM_ANGLE_MAX) * (rand() / (float) RAND_MAX) - SWIM_ANGLE_MAX;
     swimAngleDelta = SWIM_ANGLE_DELTA_MAG;
 }
@@ -37,12 +37,12 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
     normalize(goalSeekDir);
     goalSeekDir *= 1/dt;
 
-    cout << "fish: " << schoolID << "\n";
-    cout << "oldPos: " << position << "\n";
-    cout << "oldVel: " << velocity << "\n";
-    cout << "goal: " << globalGoal << "\n";
-    cout << "lineToGoal: " << lineToGoal << "\n";
-    cout << "goalSeekDir: " << goalSeekDir << "\n";
+//    cout << "fish: " << schoolID << "\n";
+//    cout << "oldPos: " << position << "\n";
+//    cout << "oldVel: " << velocity << "\n";
+//    cout << "goal: " << globalGoal << "\n";
+//    cout << "lineToGoal: " << lineToGoal << "\n";
+//    cout << "goalSeekDir: " << goalSeekDir << "\n";
 
     // Local Neighbourhood
 
@@ -124,15 +124,12 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 
     // Final Target Direction
     if (schoolID == 0) {
-
         targetDir = (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir;
-
     } else {
-
         targetDir = separationPriority * separationDir +
                 velMatchPriority * velMatchDir +
                 centeringPriority * centeringDir +
-                (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir; /// Aim to goal with remaining priority
+                (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir;
     }
 
 //    if (magnitud(targetDir) > 1) targetDir *= (1 / magnitud(targetDir));
@@ -157,10 +154,10 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
         normalize(direction);
     }
 
-    cout << "target: " << targetDir << "\n";
-    cout << "newPos: " << position << "\n";
-    cout << "newVel: " << velocity << "\n";
-    cout << "newDir: " << direction << "\n";
+//    cout << "target: " << targetDir << "\n";
+//    cout << "newPos: " << position << "\n";
+//    cout << "newVel: " << velocity << "\n";
+//    cout << "newDir: " << direction << "\n";
 
     // Update Swim Angle
     if (swimAngle >= SWIM_ANGLE_MAX) swimAngleDelta *= -1;
