@@ -49,12 +49,12 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
     int numNeighbours = 0;
     float smallestCloseNeighDist = radius;
     separationDir = Vec();
-/*
+
     for (unsigned int i = 0; i < school.size(); i++) {
         if (schoolID != i) { // Don't influence yourself
 
 
-            Vec neighbourDir = school[i]->direction;
+            Vec neighbourDir = school[i]->position - position;
             float neighbourDist = magnitud(neighbourDir);
 
             if ((neighbourDist < FOV_RADIUS) &&
@@ -78,7 +78,8 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 
         }
     }
-*/
+    
+
     // Separation Influence
     float priorityControl = 0;
     float centeringPriority = 0;
