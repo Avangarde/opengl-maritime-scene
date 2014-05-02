@@ -1,11 +1,10 @@
 #include "viewer.h"
 #include "dynamicSystem.h"
 
-
-
 DynamicSystem::DynamicSystem(Terrain * terrain, Human * human)
 : defaultMediumViscosity(0.5), dt(0.05), fishMass(1.0),
 defaultGravity(0.0, 0.0, -10.0), terrain(terrain), human(human) {
+    step = 0;
 }
 
 DynamicSystem::~DynamicSystem() {
@@ -52,7 +51,7 @@ void DynamicSystem::init(Viewer& viewer) {
 }
 
 void DynamicSystem::draw() {
-
+    human->draw();
     vector<Fish *>::iterator itP;
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         (*itP)->draw();
@@ -63,7 +62,7 @@ void DynamicSystem::animate() {
     map<const Fish *, Vec> forces;
     map<const Particle *, Vec> forcesTube;
     vector<Fish *>::iterator itP;
-    
+
     // forces
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         Fish *f = *itP;
@@ -79,7 +78,7 @@ void DynamicSystem::animate() {
         // q = q + dt * v
         f->incrPosition(dt * f->getVelocity());
     }
-    
+
     //Collisions
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         Fish *f = *itP;
@@ -95,7 +94,7 @@ void DynamicSystem::animate() {
     }
 
     step++;
-    if (step == 100 ) {
+    if (step == 100) {
         goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[2] = (terrain->size * 1.5 * (rand() / (float) RAND_MAX));
