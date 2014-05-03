@@ -78,6 +78,13 @@ void Human::animate(float dt, Vec goal) {
         direction = oldVel * dt;
         normalize(direction);
     }
+    if (incrShoulder) {
+        if (shoulderAngle < 180)shoulderAngle += 2;
+        else incrShoulder = false;
+    } else {
+        if (shoulderAngle > 45)shoulderAngle -= 2;
+        else incrShoulder = true;
+    }
 }
 
 void Human::drawUpperTorso() {
@@ -88,12 +95,12 @@ void Human::drawUpperTorso() {
 }
 
 void Human::drawFullShoulder(bool right) {
-    float rightArm = right ? 1 : -1;
+    int rightArm = right ? 1 : -1;
     glPushMatrix();
     {
         glTranslatef(rightArm*SHOULDER_DISTANCE, -1 * SHOULDER_RADIUS, 0.0);
-        glRotatef(rightArm * 120, 0, 0, 1);
-        drawFullArm(rightArm * SHOULDER_ANGLE);
+        glRotatef(rightArm * shoulderAngle, 0, 0, 1);
+        drawFullArm(rightArm * SHOULDER_POSITION);
     }
     glPopMatrix();
 }
@@ -106,13 +113,13 @@ void Human::drawLowerTorso() {
         glPushMatrix();
         {
             glTranslatef(2.2, -1 * HIP_RADIUS, 0.0);
-            drawFullLeg();
+            drawFullLeg(true);
         }
         glPopMatrix();
         glPushMatrix();
         {
             glTranslatef(0.7, -1 * HIP_RADIUS, 0.0);
-            drawFullLeg();
+            drawFullLeg(false);
         }
         glPopMatrix();
     }
@@ -123,12 +130,9 @@ void Human::drawHip() {
     glPushMatrix();
     {
         glRotatef(90, 0, 1, 0);
-        glColor3f(0.0f, 0.0f, 0.6f);
-        quadratic = gluNewQuadric();
-        //gluCylinder(quadratic, HIP_RADIUS, HIP_RADIUS, HIP_HEIGHT, PRECISION, PRECISION);
+        glColor3f(0.0f, 0.0f, 0.0f);
         glTranslatef(0, 0, HIP_HEIGHT / 2);
-        Cylinder* cylinder = new Cylinder(HIP_HEIGHT, HIP_RADIUS);
-        cylinder->draw();
+        glutSolidSphere(HIP_HEIGHT/2,PRECISION,PRECISION);
     }
     glPopMatrix();
 }
@@ -137,7 +141,7 @@ void Human::drawTorso() {
     glPushMatrix();
     {
         glRotatef(90, 1, 0, 0);
-        glColor3f(1.0f, 0.0f, 0.0f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         quadratic = gluNewQuadric();
         gluCylinder(quadratic, TORSO_DOWN_RADIUS, TORSO_UP_RADIUS, TORSO_HEIGHT, PRECISION, PRECISION);
     }
@@ -157,7 +161,7 @@ void Human::drawNeck() {
     glPushMatrix();
     {
         glRotatef(90, 1, 0, 0);
-        glColor3f(1.0f, 0.64f, 0.52f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         quadratic = gluNewQuadric();
         gluCylinder(quadratic, 0.40f, 0.40f, 0.30, PRECISION, PRECISION);
     }
@@ -167,7 +171,7 @@ void Human::drawNeck() {
 void Human::drawShoulder() {
     glPushMatrix();
     {
-        glColor3f(1.0f, 0.0f, 0.0f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         glutSolidSphere(SHOULDER_RADIUS, PRECISION, PRECISION);
     }
     glPopMatrix();
@@ -177,7 +181,7 @@ void Human::drawForearm() {
     glPushMatrix();
     {
         glRotatef(90, 1, 0, 0);
-        glColor3f(1.0f, 0.64f, 0.52f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         quadratic = gluNewQuadric();
         gluCylinder(quadratic, FOREARM_DOWN_RADIUS, FOREARM_UP_RADIUS, FOREARM_HEIGHT, PRECISION, PRECISION);
     }
@@ -187,7 +191,7 @@ void Human::drawForearm() {
 void Human::drawElbow() {
     glPushMatrix();
     {
-        glColor3f(1.0f, 0.64f, 0.52f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         glutSolidSphere(FOREARM_RADIUS, PRECISION, PRECISION);
     }
     glPopMatrix();
@@ -197,7 +201,7 @@ void Human::drawArm() {
     glPushMatrix();
     {
         glRotatef(90, 1, 0, 0);
-        glColor3f(1.0f, 0.64f, 0.52f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         quadratic = gluNewQuadric();
         gluCylinder(quadratic, FOREARM_RADIUS, ARM_UP_RADIUS, ARM_HEIGHT, PRECISION, PRECISION);
     }
@@ -213,11 +217,12 @@ void Human::drawHand() {
     glPopMatrix();
 }
 
-void Human::drawFullArm(float angleShoulder) {
+void Human::drawFullArm(float shoulderPosition) {
+
     glPushMatrix();
     {
         drawShoulder();
-        glRotatef(angleShoulder, 0, 0, 1);
+        glRotatef(shoulderPosition, 0, 0, 1);
         glPushMatrix();
         {
             drawForearm();
@@ -227,6 +232,8 @@ void Human::drawFullArm(float angleShoulder) {
                 drawElbow();
                 glPushMatrix();
                 {
+                    int isRight = shoulderPosition < 0 ? 1 : -1;
+                    glRotatef(isRight * (shoulderAngle / 4), 0, 0, 1);
                     drawArm();
                     glPushMatrix();
                     {
@@ -244,14 +251,17 @@ void Human::drawFullArm(float angleShoulder) {
     glPopMatrix();
 }
 
-void Human::drawFullLeg() {
+void Human::drawFullLeg(bool right) {
+    int isRightLeg = right ? 1 : -1;
     glPushMatrix();
     {
-        glRotatef(-45, 1, 0, 0);
+        glRotatef(-20, 1, 0, 0);
+        glRotatef(isRightLeg * ((shoulderAngle / 4) - 12), 0, 0, 1);
         drawThigh();
         glPushMatrix();
         {
-            glTranslatef(0.0, -2.2, 0.0);
+            glTranslatef(0.0, -3.7, 0.0);
+            glRotatef(-isRightLeg * shoulderAngle / 4, 0, 0, 1);
             drawKnee();
             glPushMatrix();
             {
@@ -291,7 +301,7 @@ void Human::drawThigh() {
     glPushMatrix();
     {
         glRotatef(90, 1, 0, 0);
-        glColor3f(0.0f, 0.0f, 0.6f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         quadratic = gluNewQuadric();
         gluCylinder(quadratic, THIGH_UP_RADIUS, THIGH_DOWN_RADIUS, TORSO_HEIGHT, PRECISION, PRECISION);
     }
@@ -301,7 +311,7 @@ void Human::drawThigh() {
 void Human::drawKnee() {
     glPushMatrix();
     {
-        glColor3f(0.0f, 0.0f, 0.6f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         glutSolidSphere(KNEE_RADIUS, PRECISION, PRECISION);
     }
     glPopMatrix();
@@ -311,7 +321,7 @@ void Human::drawShin() {
     glPushMatrix();
     {
         glRotatef(90, 1, 0, 0);
-        glColor3f(0.0f, 0.0f, 0.6f);
+        glColor3f(0.0f, 0.0f, 0.0f);
         quadratic = gluNewQuadric();
         gluCylinder(quadratic, SHIN_UP_RADIUS, SHIN_DOWN_RADIUS, SHIN_HEIGHT, PRECISION, PRECISION);
     }
@@ -322,7 +332,8 @@ void Human::drawFoot() {
     glPushMatrix();
     {
         glColor3f(0.8, 0.8, 0.8);
-        glScalef(0.4, 0.5, 1.5);
+        glRotatef(-45,1,0,0);
+        glScalef(0.6, 0.3, 2.2);
         glutSolidCube(1);
     }
     glPopMatrix();
