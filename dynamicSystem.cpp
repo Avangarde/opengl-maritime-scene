@@ -52,13 +52,13 @@ void DynamicSystem::init(Viewer& viewer) {
     humanGoal = Vec(-80, -80, 10);
 }
 
-void DynamicSystem::createBubbles(Vec origin, Vec vel) {
-    int nbBubbles = (int) (5 * ((double) rand() / RAND_MAX) + 5);
+void DynamicSystem::createBubbles(Vec origin, Vec vel, int maxBubbles, double maxRad) {
+    int nbBubbles = (int) (maxBubbles * ((double) rand() / RAND_MAX) + 5);
     vector<Particle *> newBubbles;
     for (int i = 0; i < nbBubbles; i++) {
         Vec initPos = Vec(origin.x + 2 * ((double) rand() / RAND_MAX) - 1, origin.y + 2 * ((double) rand() / RAND_MAX) - 1, origin.z + 2 * ((double) rand() / RAND_MAX));
         Vec initVel = Vec(vel.x, vel.y, vel.z + 2 * ((double) rand() / RAND_MAX));
-        double radius = 0.5 * ((double) rand() / RAND_MAX);
+        double radius = maxRad * ((double) rand() / RAND_MAX);
         newBubbles.push_back(new Particle(initPos, initVel, 0.0, radius));
     }
     bubbles.push_back(newBubbles);
@@ -121,8 +121,11 @@ void DynamicSystem::animate() {
     human->animate(dt, humanGoal);
 
     step++;
+    if (step % 5 == 0) {
+        createBubbles(fishes[step % fishes.size()]->getPosition(), fishes[step % fishes.size()]->getVelocity(), 10, 0.3);
+    }
     if (step == 50) {
-        createBubbles(human->getPosition(), human->getVelocity());
+        createBubbles(human->getPosition(), human->getVelocity(), 20, 0.5);
     }
     if (step == 100) {
         goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
@@ -185,22 +188,40 @@ void DynamicSystem::animate() {
 }
 
 void DynamicSystem::animateBubbles() {
-    for (unsigned int i = 0; i < bubbles.size(); i++) {
-        for (unsigned int j = 0; j < bubbles[i].size(); j++) {
-            double chX;
-            double chY;
-            if (bubbles[i][j]->getVelocity().x > 0) {
-                chX = -1.0;
+    vector< vector<Particle *> >::iterator it1;
+    for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {
+        vector<Particle *>::iterator it2;
+        for (it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
+            if ((*it2)->getPosition().z >= terrain->size * 2) {
+                (*it1).erase((it2));
+                it2--;
             } else {
-                chX = 1.0;
+                double chX;
+                double chY;
+                if ((*it2)->getVelocity().x > 0) {
+                    chX = -1.0;
+                } else {
+                    chX = 1.0;
+                }
+                if ((*it2)->getVelocity().y > 0) {
+                    chY = -1.0;
+                } else {
+                    chY = 1.0;
+                }
+                (*it2)->incrVelocity(dt * Vec(chX, chY, 1.0));
+                (*it2)->incrPosition(dt * (*it2)->getVelocity());
             }
-            if (bubbles[i][j]->getVelocity().y > 0) {
-                chY = -1.0;
-            } else {
-                chY = 1.0;
+        }
+    }
+    //Collisions
+    for (unsigned int i = 0; i < bubbles.size(); ++i) {
+        for (unsigned int j = 1; j < bubbles[i].size(); ++j) {
+            Particle *p1 = bubbles[i][j - 1];
+            Particle *p2 = bubbles[i][j];
+            if (p1->distance(p2) <= 0) {
+                p1->setRadius(p1->getRadius() + p2->getRadius());
+                p2->setRadius(0);
             }
-            bubbles[i][j]->incrVelocity(dt * Vec(chX, chY, 1.0));
-            bubbles[i][j]->incrPosition(dt * bubbles[i][j]->getVelocity());
         }
     }
 }
@@ -208,8 +229,8 @@ void DynamicSystem::animateBubbles() {
 void DynamicSystem::collisionParticleGround(Particle *p) {
     if (p->getInvMass() == 0)
         return;
-    int xPos = p->getPosition().x / 4 + terrain->size / 2;
-    int yPos = p->getPosition().y / 4 + terrain->size / 2;
+    int xPos = (int) (p->getPosition().x / 4 + terrain->size / 2) % (int) terrain->size;
+    int yPos = (int) (p->getPosition().y / 4 + terrain->size / 2) % (int) terrain->size;
     Vec groundNormal = Vec(0.0, 0.0, 1.0);
     Vec groundPosition = Vec(0.0, 0.0, terrain->rise[xPos][yPos]);
     // particle-plane distance
