@@ -49,6 +49,14 @@ public:
     void setPosition(Vec position) {
         this->position = position;
     }
+    
+    Vec getVelocity() const {
+        return velocity;
+    }
+
+    void setVelocity(Vec velocity) {
+        this->velocity = velocity;
+    }
    
     Tube* getTube() const;
     void setTube(Tube* tube);

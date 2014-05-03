@@ -48,6 +48,7 @@ class Viewer : public QGLViewer
 	protected :
 		bool toogleWireframe;
 		bool toogleLight;
+                bool toogleRecord;
 
 		/// Handle keyboard events specifically
 		virtual void keyPressEvent(QKeyEvent *e);

@@ -76,7 +76,7 @@ void Tube::draw() {
         cyl->setHeight(Utils::lengthVec(vDir) / 2);
         glPushMatrix();
         {
-            //            cyl->draw();
+            //cyl->draw();
         }
         glPopMatrix();
         initPos += this->beginningTube / (float) PRECISION_PIPE;
