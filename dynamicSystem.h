@@ -22,6 +22,7 @@ private:
     Terrain* terrain;
     
     vector<Fish *> fishes;
+    vector< vector<Particle *> > bubbles;
 
     Vec defaultGravity;
     Vec gravity;
@@ -41,6 +42,8 @@ private:
     void collisionParticleGround(Particle *p);
     void collisionLimits(Particle *p);
     void collisionFish(Fish *f1, Fish *f2);
+    void createBubbles(Vec origin, Vec vel);
+    void animateBubbles();
 
 public:
     DynamicSystem(Terrain *,Human *);

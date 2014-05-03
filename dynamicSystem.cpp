@@ -51,12 +51,35 @@ void DynamicSystem::init(Viewer& viewer) {
     humanGoal = Vec(-80, -80, 10);
 }
 
+void DynamicSystem::createBubbles(Vec origin, Vec vel) {
+    int nbBubbles = (int) (5 * ((double) rand() / RAND_MAX) + 5);
+    vector<Particle *> newBubbles;
+    for (int i = 0; i < nbBubbles; i++) {
+        Vec initPos = Vec(origin.x + 2 * ((double) rand() / RAND_MAX) - 1, origin.y + 2 * ((double) rand() / RAND_MAX) - 1, origin.z + 2 * ((double) rand() / RAND_MAX));
+        Vec initVel = Vec(vel.x, vel.y, vel.z + 2 * ((double) rand() / RAND_MAX));
+        double radius = 0.5 * ((double) rand() / RAND_MAX);
+        newBubbles.push_back(new Particle(initPos, initVel, 0.0, radius));
+    }
+    bubbles.push_back(newBubbles);
+}
+
 void DynamicSystem::draw() {
     human->draw();
     vector<Fish *>::iterator itP;
     for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
         (*itP)->draw();
     }
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+    for (unsigned int i = 0; i < bubbles.size(); i++) {
+        for (unsigned int j = 0; j < bubbles[i].size(); j++) {
+            bubbles[i][j]->draw();
+        }
+    }
+    glDisable(GL_BLEND);
+
 }
 
 void DynamicSystem::animate() {
@@ -93,10 +116,13 @@ void DynamicSystem::animate() {
     for (unsigned int i = 1; i < fishes.size(); i++) {
         fishes[i]->animate(dt, i, fishes, goalSchool);
     }
-    
+
     human->animate(dt, humanGoal);
 
     step++;
+    if (step == 50) {
+        createBubbles(human->getPosition(), human->getVelocity());
+    }
     if (step == 100) {
         goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
@@ -111,8 +137,10 @@ void DynamicSystem::animate() {
         humanGoal *= 0.70;
         humanGoal[0] *= factor;
         humanGoal[1] *= factor;
-        step = 1;
+        step = 0;
     }
+
+    animateBubbles();
 
     // Calcul de forces pour le tube
     vector<Particle *>::iterator itP2;
@@ -152,6 +180,27 @@ void DynamicSystem::animate() {
         }
     }
 
+}
+
+void DynamicSystem::animateBubbles() {
+    for (unsigned int i = 0; i < bubbles.size(); i++) {
+        for (unsigned int j = 0; j < bubbles[i].size(); j++) {
+            double chX;
+            double chY;
+            if (bubbles[i][j]->getVelocity().x > 0) {
+                chX = -1.0;
+            } else {
+                chX = 1.0;
+            }
+            if (bubbles[i][j]->getVelocity().y > 0) {
+                chY = -1.0;
+            } else {
+                chY = 1.0;
+            }
+            bubbles[i][j]->incrVelocity(dt * Vec(chX, chY, 1.0));
+            bubbles[i][j]->incrPosition(dt * bubbles[i][j]->getVelocity());
+        }
+    }
 }
 
 void DynamicSystem::collisionParticleGround(Particle *p) {
