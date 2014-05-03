@@ -1,5 +1,6 @@
 #include "viewer.h"
 #include "dynamicSystem.h"
+#include <math.h>
 
 DynamicSystem::DynamicSystem(Terrain * terrain, Human * human)
 : defaultMediumViscosity(0.5), dt(0.05), fishMass(1.0),
@@ -187,8 +188,8 @@ void DynamicSystem::animate() {
 
 void DynamicSystem::animateBubbles() {
     vector< vector<Particle *> >::iterator it1;
+    vector<Particle *>::iterator it2;
     for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {
-        vector<Particle *>::iterator it2;
         for (it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
             if ((*it2)->getPosition().z >= terrain->size * 2) {
                 (*it1).erase((it2));
@@ -212,13 +213,18 @@ void DynamicSystem::animateBubbles() {
         }
     }
     //Collisions
-    for (unsigned int i = 0; i < bubbles.size(); ++i) {
-        for (unsigned int j = 1; j < bubbles[i].size(); ++j) {
-            Particle *p1 = bubbles[i][j - 1];
-            Particle *p2 = bubbles[i][j];
-            if (p1->distance(p2) <= 0) {
-                p1->setRadius(p1->getRadius() + p2->getRadius());
-                p2->setRadius(0);
+    for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {
+        if ((*it1).size() > 1) {
+            for (it2 = (*it1).begin() + 1; it2 != (*it1).end(); ++it2) {
+                Particle *p1 = (*(it2 - 1));
+                Particle *p2 = (*it2);
+                if (p1->distance(p2) <= 0) {
+                    double newRadius = pow(pow(p1->getRadius(), 3.0) + pow(p2->getRadius(), 3.0), 1.0 / 3);
+                    p1->setRadius(newRadius);
+                    p2->setRadius(0);
+                    (*it1).erase((it2));
+                    it2--;
+                }
             }
         }
     }

@@ -33,6 +33,8 @@ public:
     Human(float scale, Vec position, Vec beginPipe) : scale(scale), position(position), tube(new Tube(beginPipe)) {
         velocity = Vec(1.0,0.0,0.0);
         direction = Vec(1.0,0.0,0.0);
+        shoulderAngle = 180;
+        incrShoulder = true;
     }
 
     void draw();
@@ -88,8 +90,8 @@ private:
     static const float TORSO_HEIGHT = 4;
 
     float scale;
-    bool incrShoulder =true;
-    int shoulderAngle=180;
+    bool incrShoulder;
+    int shoulderAngle;
     Tube* tube;
     Vec position;
     Vec velocity;
