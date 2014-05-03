@@ -31,12 +31,13 @@ public:
     }
 
     Human(float scale, Vec position, Vec beginPipe) : scale(scale), position(position), tube(new Tube(beginPipe)) {
-        velocity = Vec(0.0,0.0,0.0);
+        velocity = Vec(1.0,0.0,0.0);
+        direction = Vec(1.0,0.0,0.0);
     }
 
     void draw();
     void init(Viewer&);
-    virtual void animate();
+    void animate(float dt, Vec goal);
 //    void keyPressEvent(QKeyEvent*, Viewer&);
 //    void mouseMoveEvent(QMouseEvent*, Viewer&);
     void setScale(float scale);
@@ -48,7 +49,7 @@ public:
     void setPosition(Vec position) {
         this->position = position;
     }
-    
+   
     Tube* getTube() const;
     void setTube(Tube* tube);
 
@@ -84,6 +85,7 @@ private:
     Tube* tube;
     Vec position;
     Vec velocity;
+    Vec direction;
 //    vector<Cylinder *> cylinders;
 //    vector<Spring *> springs;
 

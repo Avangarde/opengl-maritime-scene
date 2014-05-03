@@ -46,8 +46,9 @@ void DynamicSystem::init(Viewer& viewer) {
         fishes.push_back(new Fish(initPos, initVel, initDir, fishMass, 2.0, 4.0));
     }
     fishes[0]->setColour(Vec(1.0, 0.0, 0.0));
-    fishes[0]->setPosition(Vec(0, 0, 10));
+    fishes[0]->setPosition(Vec(10, 10, 10));
     goal = Vec(40, 40, 10);
+    humanGoal = Vec(-80, -80, 10);
 }
 
 void DynamicSystem::draw() {
@@ -92,6 +93,8 @@ void DynamicSystem::animate() {
     for (unsigned int i = 1; i < fishes.size(); i++) {
         fishes[i]->animate(dt, i, fishes, goalSchool);
     }
+    
+    human->animate(dt, humanGoal);
 
     step++;
     if (step == 100) {
@@ -102,6 +105,12 @@ void DynamicSystem::animate() {
         float factor = ((terrain->size * 2) - goal[2]) / (terrain->size * 2);
         goal[0] *= factor;
         goal[1] *= factor;
+        humanGoal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
+        humanGoal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
+        humanGoal[2] = (terrain->size * (rand() / (float) RAND_MAX));
+        humanGoal *= 0.70;
+        humanGoal[0] *= factor;
+        humanGoal[1] *= factor;
         step = 1;
     }
 
@@ -110,7 +119,6 @@ void DynamicSystem::animate() {
     for (size_t i = 0; i < human->getTube()->getParticles().size(); i++) {
         Particle *p = human->getTube()->getParticles()[i];
         forcesTube[p] = gravity * p->getMass() - mediumViscosity * p->getVelocity();
-
     }
 
     // Calcul de forces pour les springs du tube
@@ -130,15 +138,18 @@ void DynamicSystem::animate() {
             p->incrVelocity(dt * forcesTube[p] * p->getInvMass());
         }
         if (i == human->getTube()->getParticles().size() - 1) {
-            Vec pos = human->getTube()->getParticles().back()->getPosition();
-            human->setPosition(pos);
-            //laParticle->setPosition(pos);
+            human->getTube()->getParticles().back()->setPosition(human->getPosition());
         }
     }
 
     // Collisions pour le tube
     for (size_t i = 0; i < human->getTube()->getParticles().size(); i++) {
         collisionParticleGround(human->getTube()->getParticles()[i]);
+        if (i == human->getTube()->getParticles().size() - 1) {
+            Vec pos = human->getTube()->getParticles().back()->getPosition();
+            human->setPosition(pos);
+            //TODO changer la vitesse de l'humain
+        }
     }
 
 }
@@ -203,5 +214,5 @@ void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
 }
 
 void DynamicSystem::mouseMoveEvent(QMouseEvent*, Viewer& v) {
-    human->getTube()->getParticles().back()->setPosition(v.manipulatedFrame()->position());
+    //human->getTube()->getParticles().back()->setPosition(v.manipulatedFrame()->position());
 }

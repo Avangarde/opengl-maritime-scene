@@ -31,6 +31,7 @@ private:
 
     double fishMass;
     Vec goal;
+    Vec humanGoal;
     int step;
 
     bool toggleGravity;

@@ -3,6 +3,7 @@
 #include "human.h"
 #include "cylinder.h"
 #include "particle.h"
+#include "vec.h"
 
 using namespace std;
 using namespace qglviewer;
@@ -30,7 +31,7 @@ void Human::init(Viewer& viewer) {
 void Human::draw() {
     glPushMatrix();
     {
-        glColor3b(119.0f, 136.0f, 153.0f);
+        glColor3f(119.0f, 136.0f, 153.0f);
         tube->draw();
     }
     glPopMatrix();
@@ -38,6 +39,25 @@ void Human::draw() {
     {
         //glRotatef(90, 1, 0, 0);
         glTranslatef(position.x, position.y, position.z);
+        // Rotate to point in direction
+        float xyLen = sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
+        float zRot, xRot;
+        if (xyLen == 0) {
+            if (direction[0] > 0)
+                zRot = 90;
+            else
+                zRot = -90;
+        } else {
+            zRot = rad2deg(acos(direction[1] / xyLen));
+        }
+        xRot = rad2deg(acos(xyLen));
+        if (direction[2] < 0) xRot *= -1;
+        if (direction[0] > 0) zRot *= -1;
+
+        glRotatef(zRot, 0, 0, 1);
+        glRotatef(xRot, 1, 0, 0);
+
+
         glScalef(scale, scale, scale);
         drawUpperTorso();
         drawLowerTorso();
@@ -45,13 +65,18 @@ void Human::draw() {
     glPopMatrix();
 }
 
-void Human::animate() {
-    velocity.z -= 0.05f;
-    position += 0.1f * velocity;
-
-    if (position.z < 0.0) {
-        velocity.z = -0.8 * velocity.z;
-        position.z = 0.0;
+void Human::animate(float dt, Vec goal) {
+    Vec dir = goal - position;
+    normalize(dir);
+    //dir *= 1/dt;
+    Vec oldVel = velocity;
+    velocity += dir * dt;
+    position += oldVel * dt;
+    if (velocity[0] != 0 ||
+            velocity[1] != 0 ||
+            velocity[2] != 0) {
+        direction = oldVel * dt;
+        normalize(direction);
     }
 }
 
@@ -302,17 +327,3 @@ void Human::drawFoot() {
     }
     glPopMatrix();
 }
-
-//void Human::mouseMoveEvent(QMouseEvent*, Viewer& v) {
-//    setPosition(v.manipulatedFrame()->position());
-//}
-//
-//void Human::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
-//    const Qt::KeyboardModifiers modifiers = e->modifiers();
-//    if ((e->key() == Qt::Key_R) && (modifiers == Qt::NoButton)) {
-//        // stop the animation, and reinit the scene
-//        viewer.stopAnimation();
-//        init(viewer);
-//        viewer.manipulatedFrame()->setPosition(getPosition());
-//    }
-//}
