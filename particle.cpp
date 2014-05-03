@@ -47,6 +47,10 @@ double Particle::getRadius() const
 	return radius;
 }
 
+void Particle::setRadius(double rad) {
+    radius = rad;
+}
+
 void Particle::setPosition(const Vec &pos)
 {
 	position = pos;

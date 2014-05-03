@@ -24,6 +24,7 @@ public:
 	double getInvMass() const;
 	double getRadius() const;
 
+        void setRadius(double rad);
 	void setPosition(const Vec &pos);
 	void setVelocity(const Vec &vel);
 	void incrPosition(const Vec &pos);	// position += pos
