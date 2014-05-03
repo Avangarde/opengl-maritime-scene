@@ -63,7 +63,6 @@ public:
 
 private:
     static const int PRECISION = 20;
-//    static const int PRECISION_PIPE = 20;
     static const float ARM_UP_RADIUS = 0.3;
     static const float ARM_HEIGHT = 1.5;
     static const float FOREARM_RADIUS = 0.5;
@@ -75,11 +74,10 @@ private:
     static const float HIP_RADIUS = 0.5;
     static const float HIP_HEIGHT = 3;
     static const float KNEE_RADIUS = 0.7;
-//    static const float RADIUS_PIPE = 0.2;
     static const float SHIN_UP_RADIUS = 0.6;
     static const float SHIN_DOWN_RADIUS = 0.45;
     static const float SHIN_HEIGHT = 2;
-    static const float SHOULDER_ANGLE = -25;
+    static const float SHOULDER_POSITION = -25;
     static const float SHOULDER_DISTANCE = 2;
     static const float SHOULDER_RADIUS = 0.6;
     static const float THIGH_HEIGHT = 1.8;
@@ -90,6 +88,8 @@ private:
     static const float TORSO_HEIGHT = 4;
 
     float scale;
+    bool incrShoulder =true;
+    int shoulderAngle=180;
     Tube* tube;
     Vec position;
     Vec velocity;
@@ -104,7 +104,7 @@ private:
     void drawFoot();
     void drawForearm();
     void drawFullArm(float angleShoulder);
-    void drawFullLeg();
+    void drawFullLeg(bool right);
     void drawFullHead();
     void drawFullShoulder(bool right);
     void drawHand();
