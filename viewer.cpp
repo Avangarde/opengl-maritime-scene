@@ -43,6 +43,7 @@ void Viewer::init() {
 
     toogleWireframe = false; // filled faces
     toogleLight = true; // light on
+    toogleRecord = false;
     //help();                   // display help
 
     if (toogleLight == true)
@@ -63,6 +64,9 @@ void Viewer::draw() {
     list<Renderable *>::iterator it;
     for (it = renderableList.begin(); it != renderableList.end(); ++it) {
         (*it)->draw();
+    }
+    if (toogleRecord) {
+        saveSnapshot();
     }
 }
 
@@ -114,7 +118,11 @@ void Viewer::keyPressEvent(QKeyEvent *e) {
             glDisable(GL_LIGHTING);
         // ... and so on with all events to handle here!
 
-    } else {
+    } else if ((e->key() == Qt::Key_R)){
+        toogleRecord = !toogleRecord;
+        displayMessage("Recording "
+                + (toogleRecord ? QString("start") : QString("stop")));
+    }else {
         // if the event is not handled here, process it as default
         QGLViewer::keyPressEvent(e);
     }
