@@ -1,5 +1,6 @@
 #include <QKeyEvent>
 
+#include "shader.h"
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else

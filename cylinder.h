@@ -7,17 +7,16 @@
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
+#endif
 #include "renderable.h"
 #include "viewer.h"
 #include <QGLViewer/vec.h>
-#endif
+#include "vec.h"
 #ifndef M_PI
 #define M_PI 3.14159265
 #endif
 //Define the NO_POINTS
 const int NO_POINTS = 16;
-
-using namespace qglviewer;
 
 class Cylinder : public Renderable {
 public:
