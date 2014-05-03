@@ -50,33 +50,26 @@ void Tube::draw() {
         Vec pos1 = part2->getPosition();
         Vec posm = pos0 + 0.5f * (pos1 - pos0);
         Vec vDir = pos1 - pos0;
+        cyl->setHeight(Utils::lengthVec(vDir) / 2);
+        vDir.normalize();
 
-        float num = abs(Utils::crossProduct(vDir, Vec(0.0, 1.0, 0.0)));
-        float den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(0.0, 1.0, 0.0));
-        float angleZX = asin(num / den)*(180 / M_PI);
-        //        cout << "angleZX = " << angleZX << "\n";
-
-        num = abs(Utils::crossProduct(vDir, Vec(1.0, 0.0, 0.0)));
-        den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(1.0, 0.0, 0.0));
-        float angleYZ = asin(num / den)*(180 / M_PI);
-        //        cout << "angleYZ = " << angleYZ << "\n";
+        float num = abs(Utils::dotProduct(vDir, Vec(0.0, 0.0, 1.0)));
+        float den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(0.0, 0.0, 1.0));
+        float angle = acos(num / den)*(180 / M_PI);
 
         cyl->setPosition(posm);
-        if ((part1->getPosition().y < part2->getPosition().y && part1->getPosition().z < part2->getPosition().z)
-                || (part2->getPosition().y < part1->getPosition().y && part2->getPosition().z < part1->getPosition().z))
-            angleZX *= -1;
-
-        cyl->setAngleXY(angleZX);
-        if ((part2->getPosition().z > part1->getPosition().z && part2->getPosition().x < part1->getPosition().x)
-                || (part2->getPosition().z < part1->getPosition().z && part2->getPosition().x > part1->getPosition().x))
-            angleYZ *= -1;
-
-        cyl->setAngleYZ(angleYZ);
         part1->draw();
-        cyl->setHeight(Utils::lengthVec(vDir) / 2);
+
+        Vec Z = Vec(0, 0, 1);    
+        Vec norm = cross(Z, vDir);
+        
+        cyl->setAngleRotation(abs(angle)*-1);
+        cyl->setVectorRotation(norm);
+        
+        
         glPushMatrix();
         {
-            //cyl->draw();
+            cyl->draw();
         }
         glPopMatrix();
         initPos += this->beginningTube / (float) PRECISION_PIPE;

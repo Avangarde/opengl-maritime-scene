@@ -26,6 +26,7 @@ void Human::setTube(Tube* tube) {
 
 void Human::init(Viewer& viewer) {
     tube->init(viewer);
+    //tube->getParticles().back()->setPosition(getPosition());
 }
 
 void Human::draw() {

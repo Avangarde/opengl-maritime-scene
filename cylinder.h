@@ -7,10 +7,10 @@
 #include <GL/glut.h>
 #else
 #include <GLUT/glut.h>
+#endif
 #include "renderable.h"
 #include "viewer.h"
 #include <QGLViewer/vec.h>
-#endif
 #ifndef M_PI
 #define M_PI 3.14159265
 #endif
@@ -26,21 +26,6 @@ public:
     void init(Viewer&);
     void draw();
 
-    float getAngleXY() {
-        return angleXZ;
-    }
-
-    void setAngleXY(float angleXY) {
-        Cylinder::angleXZ = angleXY;
-    }
-
-    float getAngleYZ() const {
-        return angleYZ;
-    }
-
-    void setAngleYZ(float angleYZ) {
-        this->angleYZ = angleYZ;
-    }
 
     Vec getPosition() const {
         return position;
@@ -57,12 +42,20 @@ public:
     void setHeight(float height) {
         this->height = height;
     }
+    
+    void setAngleRotation(float angle) {
+        this->angleRotation = angle;
+    }
+    
+    void setVectorRotation(Vec rot) {
+        this->vectorRotation = rot;
+    }
 
 private:
     float height;
     float radius;
-    float angleXZ;
-    float angleYZ;
+    float angleRotation;
+    Vec vectorRotation;
     Vec position;
 
     void drawImmediate();
