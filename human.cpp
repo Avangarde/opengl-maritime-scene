@@ -29,12 +29,8 @@ void Human::init(Viewer& viewer) {
 }
 
 void Human::draw() {
-    glPushMatrix();
-    {
-        glColor3f(119.0f, 136.0f, 153.0f);
-        tube->draw();
-    }
-    glPopMatrix();
+    glColor3f(119.0f, 136.0f, 153.0f);
+    tube->draw();
     glPushMatrix();
     {
         //glRotatef(90, 1, 0, 0);
@@ -132,7 +128,7 @@ void Human::drawHip() {
         glRotatef(90, 0, 1, 0);
         glColor3f(0.0f, 0.0f, 0.0f);
         glTranslatef(0, 0, HIP_HEIGHT / 2);
-        glutSolidSphere(HIP_HEIGHT/2,PRECISION,PRECISION);
+        glutSolidSphere(HIP_HEIGHT / 2, PRECISION, PRECISION);
     }
     glPopMatrix();
 }
@@ -332,7 +328,7 @@ void Human::drawFoot() {
     glPushMatrix();
     {
         glColor3f(0.8, 0.8, 0.8);
-        glRotatef(-45,1,0,0);
+        glRotatef(-45, 1, 0, 0);
         glScalef(0.6, 0.3, 2.2);
         glutSolidCube(1);
     }

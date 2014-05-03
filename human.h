@@ -18,20 +18,17 @@
 
 using namespace std;
 
-class Human : public Renderable {
+class Human : public Particle {
 public:
 
-    Human():tube(new Tube()) {
+    Human():Particle(Vec(),Vec(),0.1,5.0),tube(new Tube()) {
         scale = 1;
-        velocity = Vec(0.0,0.0,0.0);
     }
 
-    Human(float theScale) : scale(theScale),tube(new Tube()) {
-        velocity = Vec(0.0,0.0,0.0);
+    Human(float theScale) : Particle(Vec(),Vec(),0.1,5.0),scale(theScale),tube(new Tube()) {
     }
 
-    Human(float scale, Vec position, Vec beginPipe) : scale(scale), position(position), tube(new Tube(beginPipe)) {
-        velocity = Vec(1.0,0.0,0.0);
+    Human(float scale, Vec position, Vec beginPipe) : Particle(position,Vec(1.0,0.0,0.0),0.1,5.0),scale(scale), tube(new Tube(beginPipe)) {
         direction = Vec(1.0,0.0,0.0);
     }
 
@@ -41,23 +38,7 @@ public:
 //    void keyPressEvent(QKeyEvent*, Viewer&);
 //    void mouseMoveEvent(QMouseEvent*, Viewer&);
     void setScale(float scale);
-    float getScale() const;
-    Vec getPosition() const {
-        return position;
-    }
-
-    void setPosition(Vec position) {
-        this->position = position;
-    }
-    
-    Vec getVelocity() const {
-        return velocity;
-    }
-
-    void setVelocity(Vec velocity) {
-        this->velocity = velocity;
-    }
-   
+    float getScale() const;   
     Tube* getTube() const;
     void setTube(Tube* tube);
 
@@ -91,11 +72,7 @@ private:
     bool incrShoulder =true;
     int shoulderAngle=180;
     Tube* tube;
-    Vec position;
-    Vec velocity;
     Vec direction;
-//    vector<Cylinder *> cylinders;
-//    vector<Spring *> springs;
 
     GLUquadricObj *quadratic;
 

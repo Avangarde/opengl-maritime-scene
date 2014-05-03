@@ -36,6 +36,7 @@ void DynamicSystem::init(Viewer& viewer) {
     defaultMediumViscosity = 1.0;
     mediumViscosity = defaultMediumViscosity;
     human->init(viewer);
+    human->getTube()->getParticles()[0]->setPosition(Vec(0.0,0.0,HEIGHT_SCENE));
     viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
     viewer.manipulatedFrame()->setPosition(human->getTube()->getBeginningTube());
 
@@ -176,7 +177,8 @@ void DynamicSystem::animate() {
         if (i == human->getTube()->getParticles().size() - 1) {
             Vec pos = human->getTube()->getParticles().back()->getPosition();
             human->setPosition(pos);
-            //TODO changer la vitesse de l'humain
+            collisionParticleGround(human);
+            collisionLimits(human);
         }
     }
 
