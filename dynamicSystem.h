@@ -38,6 +38,16 @@ private:
 
     bool toggleGravity;
     bool toggleViscosity;
+    bool toggleCollisions;
+    bool toggleHuman;
+    bool toggleFishes;
+    bool toggleSand;
+    bool toggleBubbles;
+    bool handleCollisions;
+    bool handleHuman;
+    bool handleFishes;
+    bool handleSand;
+    bool handleBubbles;
 
     void clear();
     void collisionParticleGround(Particle *p);
@@ -47,6 +57,11 @@ private:
     void createSand(Vec origin, Vec vel, int maxSand);
     void animateBubbles();
     void animateSand();
+    void setHuman(bool onOff);
+    void setFishes(bool onOff);
+    void setBubbles(bool onOff);
+    void setSand(bool onOff);
+    void setCollisionsDetection(bool onOff);
 
 public:
     DynamicSystem(Terrain *,Human *);
