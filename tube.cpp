@@ -50,28 +50,39 @@ void Tube::draw() {
         Vec pos1 = part2->getPosition();
         Vec posm = pos0 + 0.5f * (pos1 - pos0);
         Vec vDir = pos1 - pos0;
+        
+        vDir.normalize();
+        float lvDir=sqrt(vDir.x*vDir.x+vDir.z*vDir.z);
+        float theAngle=acos(1/lvDir)*(180 / M_PI);
+        
+        float lvDir2=sqrt(vDir.y*vDir.y+vDir.z*vDir.z);
+        float theAngle2=acos(1/lvDir)*(180 / M_PI);
+        
+//        float num = abs(Utils::crossProduct(vDir, Vec(0.0, 1.0, 0.0)));
+//        float den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(0.0, 1.0, 0.0));
+//        float angleZX = acos(num / den)*(180 / M_PI);
+//        //        cout << "angleZX = " << angleZX << "\n";
+//
+//        num = abs(Utils::crossProduct(vDir, Vec(1.0, 0.0, 0.0)));
+//        den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(1.0, 0.0, 0.0));
+//        float angleYZ = asin(num / den)*(180 / M_PI);
+//        //        cout << "angleYZ = " << angleYZ << "\n";
+//
+//        cyl->setPosition(posm);
+//        if ((part1->getPosition().y < part2->getPosition().y && part1->getPosition().z < part2->getPosition().z)
+//                || (part2->getPosition().y < part1->getPosition().y && part2->getPosition().z < part1->getPosition().z))
+//            angleZX *= -1;
+//
+//        cyl->setAngleXY(angleZX);
+//        if ((part2->getPosition().z > part1->getPosition().z && part2->getPosition().x < part1->getPosition().x)
+//                || (part2->getPosition().z < part1->getPosition().z && part2->getPosition().x > part1->getPosition().x))
+//            angleYZ *= -1;
 
-        float num = abs(Utils::crossProduct(vDir, Vec(0.0, 1.0, 0.0)));
-        float den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(0.0, 1.0, 0.0));
-        float angleZX = asin(num / den)*(180 / M_PI);
-        //        cout << "angleZX = " << angleZX << "\n";
-
-        num = abs(Utils::crossProduct(vDir, Vec(1.0, 0.0, 0.0)));
-        den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(1.0, 0.0, 0.0));
-        float angleYZ = asin(num / den)*(180 / M_PI);
-        //        cout << "angleYZ = " << angleYZ << "\n";
-
-        cyl->setPosition(posm);
-        if ((part1->getPosition().y < part2->getPosition().y && part1->getPosition().z < part2->getPosition().z)
-                || (part2->getPosition().y < part1->getPosition().y && part2->getPosition().z < part1->getPosition().z))
-            angleZX *= -1;
-
-        cyl->setAngleXY(angleZX);
-        if ((part2->getPosition().z > part1->getPosition().z && part2->getPosition().x < part1->getPosition().x)
-                || (part2->getPosition().z < part1->getPosition().z && part2->getPosition().x > part1->getPosition().x))
-            angleYZ *= -1;
-
-        cyl->setAngleYZ(angleYZ);
+//        cyl->setAngleYZ(angleYZ);
+        
+        cyl->setAngleXZ(theAngle);
+        cyl->setAngleYZ(theAngle2);
+        
         part1->draw();
         cyl->setHeight(Utils::lengthVec(vDir) / 2);
         glPushMatrix();

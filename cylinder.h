@@ -30,8 +30,8 @@ public:
         return angleXZ;
     }
 
-    void setAngleXY(float angleXY) {
-        Cylinder::angleXZ = angleXY;
+    void setAngleXZ(float angleXZ) {
+        Cylinder::angleXZ = angleXZ;
     }
 
     float getAngleYZ() const {

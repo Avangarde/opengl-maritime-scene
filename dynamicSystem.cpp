@@ -36,7 +36,7 @@ void DynamicSystem::init(Viewer& viewer) {
     defaultMediumViscosity = 1.0;
     mediumViscosity = defaultMediumViscosity;
     human->init(viewer);
-    human->getTube()->getParticles()[0]->setPosition(Vec(0.0,0.0,HEIGHT_SCENE));
+    human->getTube()->getParticles()[0]->setPosition(Vec(0.0, 0.0, HEIGHT_SCENE));
     viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
     viewer.manipulatedFrame()->setPosition(human->getTube()->getBeginningTube());
 
@@ -64,6 +64,22 @@ void DynamicSystem::createBubbles(Vec origin, Vec vel, int maxBubbles, double ma
     bubbles.push_back(newBubbles);
 }
 
+void DynamicSystem::createSand(Vec origin, Vec vel, int maxSand) {
+    int nbSand = (int) (maxSand * ((double) rand() / RAND_MAX) + 10);
+    vector<Particle *> newSand;
+    for (int i = 0; i < nbSand; i++) {
+        int rad = 4 * (((double) rand() / RAND_MAX));
+        float posx = 2 * rad * ((double) rand() / RAND_MAX) - rad;
+        float posy = sqrt(rad * rad - posx * posx);
+        Vec initPos = Vec(origin.x + posx, origin.y + posy, origin.z + 1 * ((double) rand() / RAND_MAX));
+        Vec initPos2 = Vec(origin.x + posx, origin.y - posy, origin.z + 1 * ((double) rand() / RAND_MAX));
+        Vec initVel = Vec(vel.x / 4, vel.y / 4, vel.z / 8 * ((double) rand() / RAND_MAX));
+        newSand.push_back(new Particle(initPos, initVel, 0.0, 0.1));
+        newSand.push_back(new Particle(initPos2, initVel, 0.0, 0.1));
+    }
+    sand.push_back(newSand);
+}
+
 void DynamicSystem::draw() {
     human->draw();
     vector<Fish *>::iterator itP;
@@ -81,6 +97,12 @@ void DynamicSystem::draw() {
     }
     glDisable(GL_BLEND);
 
+    glColor3f(1.0f, 0.89f, 0.8f);
+    for (unsigned int i = 0; i < sand.size(); i++) {
+        for (unsigned int j = 0; j < sand[i].size(); j++) {
+            sand[i][j]->draw();
+        }
+    }
 }
 
 void DynamicSystem::animate() {
@@ -145,6 +167,7 @@ void DynamicSystem::animate() {
     }
 
     animateBubbles();
+    animateSand();
 
     // Calcul de forces pour le tube
     vector<Particle *>::iterator itP2;
@@ -226,6 +249,22 @@ void DynamicSystem::animateBubbles() {
     }
 }
 
+void DynamicSystem::animateSand() {
+    vector< vector<Particle *> >::iterator it1;
+    for (it1 = sand.begin(); it1 != sand.end(); ++it1) {
+        vector<Particle *>::iterator it2;
+        for (it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
+            if ((*it2)->getPosition().z < 0) {
+                (*it1).erase((it2));
+                it2--;
+            } else {
+                (*it2)->incrVelocity(dt * Vec(0, 0, -1));
+                (*it2)->incrPosition(dt * (*it2)->getVelocity());
+            }
+        }
+    }
+}
+
 void DynamicSystem::collisionParticleGround(Particle *p) {
     if (p->getInvMass() == 0)
         return;
@@ -245,6 +284,8 @@ void DynamicSystem::collisionParticleGround(Particle *p) {
     // updates position and velocity of the particle
     p->incrPosition(-penetration * groundNormal);
     p->incrVelocity(-(1 + 1) * vPen * groundNormal);
+
+    createSand(p->getPosition(), p->getVelocity(), 200);
 }
 
 void DynamicSystem::collisionLimits(Particle *p) {
