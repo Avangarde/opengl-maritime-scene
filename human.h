@@ -64,8 +64,8 @@ private:
     static const float THIGH_HEIGHT = 1.8;
     static const float THIGH_DOWN_RADIUS = 0.6;
     static const float THIGH_UP_RADIUS = 0.8;
-    static const float TORSO_DOWN_RADIUS = 2;
-    static const float TORSO_UP_RADIUS = 1.5;
+    static const float TORSO_UP_RADIUS = 2;
+    static const float TORSO_DOWN_RADIUS = 1.5;
     static const float TORSO_HEIGHT = 4;
 
     float scale;

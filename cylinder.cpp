@@ -99,7 +99,6 @@ void Cylinder::drawCircle(float z) {
         glVertex3f(cos(t) * radius, sin(t) * radius, z);
     }
     glEnd();
-
 }
 
 //==================== 1. Immediate method ===================================

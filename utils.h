@@ -19,8 +19,9 @@ public:
     virtual ~Utils();
     static float lengthVec(Vec vec);
     static float crossProduct(Vec vec1,Vec vec2);
+    static void drawCircle(float);
 private:
-
+    static const int NO_POINTS=16;
 };
 
 #endif	/* UTILS_H */

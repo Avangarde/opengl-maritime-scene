@@ -139,7 +139,8 @@ void Human::drawTorso() {
         glRotatef(90, 1, 0, 0);
         glColor3f(0.0f, 0.0f, 0.0f);
         quadratic = gluNewQuadric();
-        gluCylinder(quadratic, TORSO_DOWN_RADIUS, TORSO_UP_RADIUS, TORSO_HEIGHT, PRECISION, PRECISION);
+        gluCylinder(quadratic, TORSO_UP_RADIUS, TORSO_DOWN_RADIUS, TORSO_HEIGHT, PRECISION, PRECISION);
+        Utils::drawCircle(TORSO_UP_RADIUS);
     }
     glPopMatrix();
 }
