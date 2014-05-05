@@ -25,6 +25,7 @@ void Human::setTube(Tube* tube) {
 }
 
 void Human::init(Viewer& viewer) {
+    tube = new Tube(Vec(0.0,0.0,HEIGHT_SCENE));
     tube->init(viewer);
 }
 

@@ -1,5 +1,6 @@
 #include "viewer.h"
 #include "dynamicSystem.h"
+#include "vec.h"
 
 DynamicSystem::DynamicSystem(Terrain * terrain, Human * human)
 : defaultMediumViscosity(0.5), dt(0.05), fishMass(1.0),
@@ -61,14 +62,14 @@ void DynamicSystem::init(Viewer& viewer) {
     defaultMediumViscosity = 1.0;
     mediumViscosity = defaultMediumViscosity;
     handleCollisions = true;
-    handleBubbles=true;
-    handleFishes=true;
-    handleHuman=true;
-    handleSand=true;
+    handleBubbles = true;
+    handleFishes = true;
+    handleHuman = true;
+    handleSand = true;
     human->init(viewer);
+    human->setPosition(Vec(0.0,0.0,10.0));
+    human->setVelocity(Vec(0.0,0.0,0.0));    
     human->getTube()->getParticles()[0]->setPosition(Vec(0.0, 0.0, HEIGHT_SCENE));
-    viewer.setManipulatedFrame(new qglviewer::ManipulatedFrame());
-    viewer.manipulatedFrame()->setPosition(human->getTube()->getBeginningTube());
 
     for (int i = 0; i < 30; i++) {
         Vec initPos = Vec(((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*20);
@@ -81,7 +82,7 @@ void DynamicSystem::init(Viewer& viewer) {
     goal = Vec(40, 40, 10);
     humanGoal = Vec(-80, -80, 10);
     //Submarine
-    Vec pos = Vec(150, 50, 30);
+    Vec pos = Vec(180, 60, 30);
     Vec vel = Vec(-6, -2, 0);
     Vec dir = Vec(-6, -2, 0);
     submarine = new Submarine(pos, vel, dir, 50.0, 40.0, 60.0);
@@ -144,7 +145,7 @@ void DynamicSystem::draw() {
         }
     }
     glDisable(GL_BLEND);
-    
+
     if (toggleSubmarine) {
         submarine->draw();
     }
@@ -256,18 +257,26 @@ void DynamicSystem::animate() {
             }
         }
     }
-    
+    //Submarine
     if (toggleSubmarine) {
         submarine->animate(dt, submarineGoal);
         createBubbles(submarine->getPropPosition(), submarine->getVelocity()*-1, 10, 0.5);
+        if (handleCollisions) {
+            vector<Fish *>::iterator itP;
+            for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
+                Fish *f = *itP;
+                collisionParticleSubmarine(f);
+            }
+            collisionParticleSubmarine(human);
+        }
     }
-    
+
 }
 
 void DynamicSystem::animateBubbles() {
     vector< vector<Particle *> >::iterator it1;
-    for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {
-        vector<Particle *>::iterator it2;
+    vector<Particle *>::iterator it2;
+    for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {        
         for (it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
             if ((*it2)->getPosition().z >= terrain->size * 2) {
                 (*it1).erase((it2));
@@ -292,13 +301,18 @@ void DynamicSystem::animateBubbles() {
     }
     //Collisions
     if (handleCollisions) {
-        for (unsigned int i = 0; i < bubbles.size(); ++i) {
-            for (unsigned int j = 1; j < bubbles[i].size(); ++j) {
-                Particle *p1 = bubbles[i][j - 1];
-                Particle *p2 = bubbles[i][j];
-                if (p1->distance(p2) <= 0) {
-                    p1->setRadius(p1->getRadius() + p2->getRadius());
-                    p2->setRadius(0);
+        for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {
+            if ((*it1).size() > 1) {
+                for (it2 = (*it1).begin() + 1; it2 != (*it1).end(); ++it2) {
+                    Particle *p1 = (*(it2 - 1));
+                    Particle *p2 = (*it2);
+                    if (p1->distance(p2) <= 0) {
+                        double newRadius = pow(pow(p1->getRadius(), 3.0) + pow(p2->getRadius(), 3.0), 1.0 / 3);
+                        p1->setRadius(newRadius);
+                        p2->setRadius(0);
+                        (*it1).erase((it2));
+                        it2--;
+                    }
                 }
             }
         }
@@ -357,6 +371,15 @@ void DynamicSystem::collisionLimits(Particle *p) {
     }
 }
 
+void DynamicSystem::collisionParticleSubmarine(Particle* p) {
+    if (submarine->distance(p) <= p->getRadius()) {        
+        Vec dir = crossProduct(submarine->getDirection(), p->getVelocity());
+        dir.normalize();
+        p->incrVelocity(dir);
+        p->incrPosition(p->getVelocity() * dt);
+    }
+}
+
 void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
     // Get event modifiers key
     const Qt::KeyboardModifiers modifiers = e->modifiers();
@@ -408,7 +431,7 @@ void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
                 + (terrain->toggleCaustics ? QString("true") : QString("false")));
     } else if ((e->key() == Qt::Key_U) && (modifiers == Qt::NoButton)) {
         toggleSubmarine = !toggleSubmarine;
-        submarine->setPosition(Vec(120, 50, 30));
+        submarine->setPosition(Vec(180, 60, 30));
         viewer.displayMessage("Placing Submarine "
                 + (toggleSubmarine ? QString("true") : QString("false")));
     } else if ((e->key() == Qt::Key_Home) && (modifiers == Qt::NoButton)) {
@@ -424,7 +447,7 @@ void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
         toggleSand = true;
         toggleBubbles = true;
         terrain->toggleCaustics = true;
-        
+
     }
 }
 

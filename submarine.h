@@ -35,6 +35,7 @@ public:
     void draw();
     void animate(float dt, Vec goal);
     const Vec & getPropPosition() const;
+    const Vec & getDirection() const;
     
 };
 

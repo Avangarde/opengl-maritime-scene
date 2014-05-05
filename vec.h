@@ -13,7 +13,9 @@ using namespace qglviewer;
 #include <cmath>
 #include <iostream>
 
+#ifndef M_PI
 #define M_PI 3.14159265
+#endif
 
 // Radians/Degree conversion
 
@@ -49,7 +51,7 @@ static inline float dot(const Vec &a, const Vec &b) {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-static inline Vec cross(const Vec &a, const Vec &b) {
+static inline Vec crossProduct(const Vec &a, const Vec &b) {
     return Vec(a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]);
 }
 

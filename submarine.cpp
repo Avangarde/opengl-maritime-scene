@@ -15,6 +15,10 @@ const Vec & Submarine::getPropPosition() const {
     return propPosition;
 }
 
+const Vec & Submarine::getDirection() const {
+    return direction;
+}
+
 void Submarine::animate(float dt, Vec goal) {
     angleProp += 10;
     if (angleProp >= 360) {
