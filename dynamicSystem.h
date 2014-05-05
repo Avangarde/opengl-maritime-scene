@@ -52,6 +52,8 @@ private:
     bool handleSand;
     bool handleBubbles;
 
+    bool toggleSubmarine;
+
     void clear();
     void collisionParticleGround(Particle *p);
     void collisionLimits(Particle *p);

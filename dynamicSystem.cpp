@@ -218,7 +218,8 @@ void DynamicSystem::animate() {
 
     if (handleHuman) {
         // Calcul de forces pour le tube
-        vector<Particle *>::iterator itP2;
+        human->getTube()->getParticles().back()->setPosition(human->getPosition());
+        human->getTube()->getParticles().back()->setVelocity(human->getVelocity());
         for (size_t i = 0; i < human->getTube()->getParticles().size(); i++) {
             Particle *p = human->getTube()->getParticles()[i];
             forcesTube[p] = gravity * p->getMass() - mediumViscosity * p->getVelocity();
@@ -239,9 +240,6 @@ void DynamicSystem::animate() {
             if (i != 0) {
                 p->incrPosition(dt * p->getVelocity());
                 p->incrVelocity(dt * forcesTube[p] * p->getInvMass());
-            }
-            if (i == human->getTube()->getParticles().size() - 1) {
-                human->getTube()->getParticles().back()->setPosition(human->getPosition());
             }
         }
 
@@ -408,6 +406,11 @@ void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
         terrain->setCaustics(terrain->toggleCaustics);
         viewer.displayMessage("Caustics : "
                 + (terrain->toggleCaustics ? QString("true") : QString("false")));
+    } else if ((e->key() == Qt::Key_U) && (modifiers == Qt::NoButton)) {
+        toggleSubmarine = !toggleSubmarine;
+        submarine->setPosition(Vec(120, 50, 30));
+        viewer.displayMessage("Placing Submarine "
+                + (toggleSubmarine ? QString("true") : QString("false")));
     } else if ((e->key() == Qt::Key_Home) && (modifiers == Qt::NoButton)) {
         // stop the animation, and reinit the scene
         viewer.stopAnimation();

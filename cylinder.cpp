@@ -52,8 +52,7 @@ void Cylinder::draw() {
 
     // draw immediate (center Cylinder)
     glTranslatef(position.x, position.y, position.z);
-    glRotatef(angleXZ, 1.0, 0.0, 0.0);
-    glRotatef(angleYZ, 0.0, 1.0, 0.0);
+    glRotatef(angleRotation, vectorRotation.x, vectorRotation.y, vectorRotation.z);
     drawImmediate();
 
     glPopMatrix();
