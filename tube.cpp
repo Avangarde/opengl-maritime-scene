@@ -24,9 +24,9 @@ void Tube::init(Viewer& viewer) {
         Cylinder* cylinder = new Cylinder(cylinderHeight, RADIUS_PIPE);
         cylinder->init(viewer);
         this->cylinders.push_back(cylinder);
-        Particle * particle1 = new Particle(initPos, Vec(), 0.7, 0.1);
+        Particle * particle1 = new Particle(initPos, Vec(), 0.5, RADIUS_PIPE);
         if (i != 0)
-            springs.push_back(new Spring(particles.back(), particle1, PRECISION_PIPE * .55, cylinderHeight / (PRECISION_PIPE), 2));
+            springs.push_back(new Spring(particles.back(), particle1, 4, cylinderHeight / (PRECISION_PIPE), 2));
         this->particles.push_back(particle1);
 
     }

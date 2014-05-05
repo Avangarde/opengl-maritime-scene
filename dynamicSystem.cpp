@@ -67,8 +67,8 @@ void DynamicSystem::init(Viewer& viewer) {
     handleHuman = true;
     handleSand = true;
     human->init(viewer);
-    human->setPosition(Vec(0.0,0.0,10.0));
-    human->setVelocity(Vec(-1.0,-1.0,0.0));    
+    human->setPosition(Vec(0.0, 0.0, 30.0));
+    human->setVelocity(Vec(-1.0, -1.0, 0.0));
     human->getTube()->getParticles()[0]->setPosition(Vec(0.0, 0.0, HEIGHT_SCENE));
     humanGoal = Vec(-80, -80, 10);
 
@@ -81,7 +81,7 @@ void DynamicSystem::init(Viewer& viewer) {
     fishes[0]->setColour(Vec(1.0, 0.0, 0.0));
     fishes[0]->setPosition(Vec(10, 10, 10));
     goal = Vec(40, 40, 10);
-    
+
     //Submarine
     Vec pos = Vec(180, 60, 30);
     Vec vel = Vec(-6, -2, 0);
@@ -191,7 +191,9 @@ void DynamicSystem::animate() {
             fishes[i]->animate(dt, i, fishes, goalSchool);
         }
     }
-    if (handleHuman) human->animate(dt, humanGoal);
+    if (handleHuman) {
+        human->animate(dt, humanGoal);
+    }
     step++;
     if (step % 5 == 0 && handleFishes) {
         createBubbles(fishes[step % fishes.size()]->getPosition(), fishes[step % fishes.size()]->getVelocity(), 10, 0.3);
@@ -264,14 +266,16 @@ void DynamicSystem::animate() {
         submarine->animate(dt, submarineGoal);
         createBubbles(submarine->getPropPosition(), submarine->getVelocity()*-1, 10, 0.5);
         if (handleCollisions) {
-            vector<Fish *>::iterator itP;
-            for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
-                Fish *f = *itP;
-                collisionParticleSubmarine(f);
+            if (toggleFishes) {
+                vector<Fish *>::iterator itP;
+                for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
+                    Fish *f = *itP;
+                    collisionParticleSubmarine(f);
+                }
             }
-            collisionParticleSubmarine(human);
-            for (size_t i = 0; i < human->getTube()->getParticles().size(); i++) {
-                //collisionParticleSubmarine(human->getTube()->getParticles()[i]);
+            if (toggleHuman) {
+                collisionParticleSubmarine(human);
+                collisionTubeSubmarine(human->getTube()->getParticles());
             }
         }
     }
@@ -281,7 +285,7 @@ void DynamicSystem::animate() {
 void DynamicSystem::animateBubbles() {
     vector< vector<Particle *> >::iterator it1;
     vector<Particle *>::iterator it2;
-    for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {        
+    for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {
         for (it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
             if ((*it2)->getPosition().z >= terrain->size * 2) {
                 (*it1).erase((it2));
@@ -377,7 +381,7 @@ void DynamicSystem::collisionLimits(Particle *p) {
 }
 
 void DynamicSystem::collisionParticleSubmarine(Particle* p) {
-    if (submarine->distance(p) <= p->getRadius()) {        
+    if (submarine->distance(p) <= p->getRadius()) {
         Vec dir = crossProduct(submarine->getDirection(), p->getVelocity());
         dir.normalize();
         p->incrVelocity(dir);
@@ -386,11 +390,33 @@ void DynamicSystem::collisionParticleSubmarine(Particle* p) {
 }
 
 void DynamicSystem::collisionParticleHuman(Particle* p) {
-    if (human->distance(p) <= p->getRadius()) {        
+    if (human->distance(p) <= p->getRadius()) {
         Vec dir = crossProduct(human->getDirection(), p->getVelocity());
         dir.normalize();
         p->incrVelocity(dir);
         p->incrPosition(p->getVelocity() * dt);
+    }
+}
+
+void DynamicSystem::collisionTubeSubmarine(vector<Particle*> p) {
+    int min = terrain->size;
+    int idx = human->getTube()->getSprings().size() - 1;
+    bool col = false;
+    for (size_t i = human->getTube()->getSprings().size() - 1; i > 0; i--) {
+        double distance = submarine->distance(p[i]);
+        if (distance <= submarine->getRadius()) {
+            if (distance < min) {
+                idx = i;
+            }
+            col = true;
+        }
+    }
+    if (col) {
+        Vec vel = p[idx]->getVelocity();
+        vel.normalize();
+        Vec dir = crossProduct(submarine->getDirection(), vel);
+        dir.normalize();
+        p[idx]->incrPosition(dir);
     }
 }
 

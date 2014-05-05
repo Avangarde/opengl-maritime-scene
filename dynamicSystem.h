@@ -60,6 +60,7 @@ private:
     void collisionFish(Fish *f1, Fish *f2);
     void collisionParticleSubmarine(Particle *p);
     void collisionParticleHuman(Particle *p);
+    void collisionTubeSubmarine(vector<Particle*> p);
     void createBubbles(Vec origin, Vec vel, int maxBubbles, double maxRad);
     void createSand(Vec origin, Vec vel, int maxSand);
     void animateBubbles();

@@ -40,7 +40,6 @@ void Human::draw() {
     {
         //glRotatef(90, 1, 0, 0);
         glTranslatef(position.x, position.y, position.z);
-        glutSolidSphere(radius, 12,12);
         // Rotate to point in direction
         float xyLen = sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
         float zRot, xRot;
