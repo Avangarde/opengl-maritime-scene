@@ -13,9 +13,7 @@ using namespace qglviewer;
 #include <cmath>
 #include <iostream>
 
-#ifndef M_PI
 #define M_PI 3.14159265
-#endif
 
 // Radians/Degree conversion
 

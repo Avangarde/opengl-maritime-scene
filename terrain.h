@@ -27,6 +27,9 @@ public:
     Terrain(const Terrain& orig);
     virtual ~Terrain();
 
+    bool toggleCaustics;
+    bool handleCaustics;
+    
     int size;
     int solidId;
     static double unused;
@@ -40,6 +43,7 @@ public:
     void draw();
     void drawTerrain();
     void animate();
+    void setCaustics(bool onOff);
 
     double scale(double x) {
         return x * (((double) rand() / RAND_MAX) - 0.5);

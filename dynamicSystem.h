@@ -25,6 +25,7 @@ private:
     
     vector<Fish *> fishes;
     vector< vector<Particle *> > bubbles;
+    vector< vector<Particle *> > sand;
 
     Vec defaultGravity;
     Vec gravity;
@@ -40,15 +41,30 @@ private:
 
     bool toggleGravity;
     bool toggleViscosity;
-    
-    bool toggleSubmarine;
+    bool toggleCollisions;
+    bool toggleHuman;
+    bool toggleFishes;
+    bool toggleSand;
+    bool toggleBubbles;
+    bool handleCollisions;
+    bool handleHuman;
+    bool handleFishes;
+    bool handleSand;
+    bool handleBubbles;
 
     void clear();
     void collisionParticleGround(Particle *p);
     void collisionLimits(Particle *p);
     void collisionFish(Fish *f1, Fish *f2);
     void createBubbles(Vec origin, Vec vel, int maxBubbles, double maxRad);
+    void createSand(Vec origin, Vec vel, int maxSand);
     void animateBubbles();
+    void animateSand();
+    void setHuman(bool onOff);
+    void setFishes(bool onOff);
+    void setBubbles(bool onOff);
+    void setSand(bool onOff);
+    void setCollisionsDetection(bool onOff);
 
 public:
     DynamicSystem(Terrain *,Human *);

@@ -22,7 +22,7 @@ using namespace qglviewer;
 std::ofstream myfile;
 
 double Terrain::unused = -10032.4775;
-qglviewer::Vec noNormal = (Vec(0,0,0));
+qglviewer::Vec noNormal = (Vec(0, 0, 0));
 
 GLfloat causticScale = 0.2;
 static int causticIncrement = 2;
@@ -47,12 +47,15 @@ Terrain::Terrain(int r) : size(r) {
 }
 
 void Terrain::init(Viewer &) {
+    toggleCaustics=true;
+    handleCaustics=true;
+    
     rise[0][0] = ((double) rand() / RAND_MAX);
     rise[0][size - 1] = ((double) rand() / RAND_MAX);
     rise[size - 1][0] = ((double) rand() / RAND_MAX);
     rise[size - 1][size - 1] = ((double) rand() / RAND_MAX);
     createTerrain(0, 0, size - 1, size - 1, 0.30);
-    
+
     //Caustics
     int width, height;
     GLubyte *imageData;
@@ -119,7 +122,7 @@ void Terrain::createTerrain(int x1, int y1, int x2, int y2, double roughness) {
         }
     }
     for (int x = 1; x <= size - 2; x++) {
-        for (int z = 1; z <= size - 2; z++) {          
+        for (int z = 1; z <= size - 2; z++) {
             normals[x][z] = getNormal(x, z);
         }
     }
@@ -156,77 +159,82 @@ qglviewer::Vec Terrain::getNormal(int x, int z) {
     return normal;
 }
 
+void Terrain::setCaustics(bool onOff) {
+    handleCaustics = onOff;
+}
+
 void Terrain::draw() {
-//    glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-    glEnable(GL_BLEND);
+    //    glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+    if (handleCaustics) {
+        glEnable(GL_BLEND);
 
-    GLfloat sPlane[4] = {0.05, 0.03, 0.0, 0.0};
-    GLfloat tPlane[4] = {0.0, 0.03, 0.05, 0.0};
+        GLfloat sPlane[4] = {0.05, 0.03, 0.0, 0.0};
+        GLfloat tPlane[4] = {0.0, 0.03, 0.05, 0.0};
 
-    sPlane[0] = 0.05 * causticScale;
-    sPlane[1] = 0.03 * causticScale;
+        sPlane[0] = 0.05 * causticScale;
+        sPlane[1] = 0.03 * causticScale;
 
-    tPlane[1] = 0.03 * causticScale;
-    tPlane[2] = 0.05 * causticScale;
+        tPlane[1] = 0.03 * causticScale;
+        tPlane[2] = 0.05 * causticScale;
 
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    glTexGenfv(GL_S, GL_OBJECT_PLANE, sPlane);
-    glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);
-    glEnable(GL_TEXTURE_GEN_S);
-    glEnable(GL_TEXTURE_GEN_T);
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+        glTexGenfv(GL_S, GL_OBJECT_PLANE, sPlane);
+        glTexGenfv(GL_T, GL_OBJECT_PLANE, tPlane);
+        glEnable(GL_TEXTURE_GEN_S);
+        glEnable(GL_TEXTURE_GEN_T);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, currentCaustic + 1);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, currentCaustic + 1);
 
 
-    drawTerrain();
-  
-    glDisable(GL_TEXTURE_2D);
+        drawTerrain();
 
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_2D);
 
-    glDisable(GL_BLEND);
-      
+        glDisable(GL_TEXTURE_GEN_S);
+        glDisable(GL_TEXTURE_GEN_T);
+
+        glDisable(GL_BLEND);
+    } else drawTerrain();
 }
 
 void Terrain::drawTerrain() {
     glPushMatrix();
     glRotated(90, 1, 0, 0);
-    glTranslatef(-size*2, 0, -size*2);
-//    glScalef(4.0, 0.0, 4.0);
-//    glTranslatef(-size/2, 0, -size/2);
+    glTranslatef(-size * 2, 0, -size * 2);
+    //    glScalef(4.0, 0.0, 4.0);
+    //    glTranslatef(-size/2, 0, -size/2);
     Vec normal;
     glColor3f(0.8f, 0.8f, 0.8f);
     //glClearColor(0.8f, 0.8f, 0.8f, 0.1f);
     glBegin(GL_TRIANGLES);
     for (int x = 1; x < size - 2; x++) {
         for (int z = 1; z < size - 2; z++) {
-            
+
             normal = normals[x][z];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(4*x, rise[x][z], 4*z);
-            
-            normal = normals[x+1][z];
-            glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(4*(x + 1), rise[x + 1][z], 4*z);
-            
-            normal = normals[x][z + 1];
-            glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(4*x, rise[x][z + 1], 4*(z + 1));
-            
+            glVertex3f(4 * x, rise[x][z], 4 * z);
+
             normal = normals[x + 1][z];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(4*(x + 1), rise[x + 1][z], 4*z);
-            
-            normal = normals[x + 1][z + 1];
-            glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(4*(x + 1), rise[x + 1][z + 1], 4*(z + 1));
-            
+            glVertex3f(4 * (x + 1), rise[x + 1][z], 4 * z);
+
             normal = normals[x][z + 1];
             glNormal3f(normal[0], normal[1], normal[2]);
-            glVertex3f(4*x, rise[x][z + 1], 4*(z + 1));
+            glVertex3f(4 * x, rise[x][z + 1], 4 * (z + 1));
+
+            normal = normals[x + 1][z];
+            glNormal3f(normal[0], normal[1], normal[2]);
+            glVertex3f(4 * (x + 1), rise[x + 1][z], 4 * z);
+
+            normal = normals[x + 1][z + 1];
+            glNormal3f(normal[0], normal[1], normal[2]);
+            glVertex3f(4 * (x + 1), rise[x + 1][z + 1], 4 * (z + 1));
+
+            normal = normals[x][z + 1];
+            glNormal3f(normal[0], normal[1], normal[2]);
+            glVertex3f(4 * x, rise[x][z + 1], 4 * (z + 1));
         }
     }
     glEnd();

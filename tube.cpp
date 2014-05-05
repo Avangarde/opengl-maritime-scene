@@ -50,18 +50,13 @@ void Tube::draw() {
         Vec pos1 = part2->getPosition();
         Vec posm = pos0 + 0.5f * (pos1 - pos0);
         Vec vDir = pos1 - pos0;
-        cyl->setHeight(Utils::lengthVec(vDir) / 2);
+        
         vDir.normalize();
-
-        float num = abs(Utils::dotProduct(vDir, Vec(0.0, 0.0, 1.0)));
-        float den = Utils::lengthVec(vDir) * Utils::lengthVec(Vec(0.0, 0.0, 1.0));
-        float angle = acos(num / den)*(180 / M_PI);
-
-        cyl->setPosition(posm);
-        part1->draw();
-
-        Vec Z = Vec(0, 0, 1);    
-        Vec norm = cross(Z, vDir);
+        float lvDir=sqrt(vDir.x*vDir.x+vDir.z*vDir.z);
+        float theAngle=acos(1/lvDir)*(180 / M_PI);
+        
+        float lvDir2=sqrt(vDir.y*vDir.y+vDir.z*vDir.z);
+        float theAngle2=acos(1/lvDir)*(180 / M_PI);
         
         if (pos0.z > pos1.z) {
             angle = 180 - angle;
@@ -70,7 +65,11 @@ void Tube::draw() {
         cyl->setAngleRotation(angle);
         cyl->setVectorRotation(norm);
         
+        cyl->setAngleXZ(theAngle);
+        cyl->setAngleYZ(theAngle2);
         
+        part1->draw();
+        cyl->setHeight(Utils::lengthVec(vDir) / 2);
         glPushMatrix();
         {
             cyl->draw();

@@ -69,7 +69,7 @@ void Landscape::init(Viewer&) {
 
     glFogi(GL_FOG_MODE, GL_EXP);
     glFogfv(GL_FOG_COLOR, fogColor);
-    glFogf(GL_FOG_DENSITY, 0.01);
+    glFogf(GL_FOG_DENSITY, 0.005);
     glHint(GL_FOG_HINT, GL_DONT_CARE);
     glFogf(GL_FOG_START, 1.0f);
     glFogf(GL_FOG_END, 5.0f);

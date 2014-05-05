@@ -52,7 +52,8 @@ void Cylinder::draw() {
 
     // draw immediate (center Cylinder)
     glTranslatef(position.x, position.y, position.z);
-    glRotatef(angleRotation, vectorRotation.x, vectorRotation.y, vectorRotation.z);
+    glRotatef(angleXZ, 1.0, 0.0, 0.0);
+    glRotatef(angleYZ, 0.0, 1.0, 0.0);
     drawImmediate();
 
     glPopMatrix();
@@ -98,7 +99,6 @@ void Cylinder::drawCircle(float z) {
         glVertex3f(cos(t) * radius, sin(t) * radius, z);
     }
     glEnd();
-
 }
 
 //==================== 1. Immediate method ===================================

@@ -1,6 +1,5 @@
 
 #include <qapplication.h>
-#include "GL/glew.h"
 #include "viewer.h"
 #include "terrain.h"
 #include "human.h"
@@ -15,7 +14,6 @@ int main(int argc, char** argv) {
 
     // Instantiate the viewer.
     Viewer viewer;
-	glewInit();
 
     // build your scene here
 
