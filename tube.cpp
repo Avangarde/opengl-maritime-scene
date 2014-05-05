@@ -24,9 +24,9 @@ void Tube::init(Viewer& viewer) {
         Cylinder* cylinder = new Cylinder(cylinderHeight, RADIUS_PIPE);
         cylinder->init(viewer);
         this->cylinders.push_back(cylinder);
-        Particle * particle1 = new Particle(initPos, Vec(), 0.5, 0.1);
+        Particle * particle1 = new Particle(initPos, Vec(), 0.7, 0.1);
         if (i != 0)
-            springs.push_back(new Spring(particles.back(), particle1, PRECISION_PIPE * .55, cylinderHeight / (PRECISION_PIPE * 4), 1));
+            springs.push_back(new Spring(particles.back(), particle1, PRECISION_PIPE * .55, cylinderHeight / (PRECISION_PIPE), 2));
         this->particles.push_back(particle1);
 
     }
@@ -63,7 +63,11 @@ void Tube::draw() {
         Vec Z = Vec(0, 0, 1);    
         Vec norm = cross(Z, vDir);
         
-        cyl->setAngleRotation(abs(angle)*-1);
+        if (pos0.z > pos1.z) {
+            angle = 180 - angle;
+        }
+        
+        cyl->setAngleRotation(angle);
         cyl->setVectorRotation(norm);
         
         

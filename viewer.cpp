@@ -66,9 +66,6 @@ void Viewer::draw() {
     for (it = renderableList.begin(); it != renderableList.end(); ++it) {
         (*it)->draw();
     }
-    if (toogleRecord) {
-        saveSnapshot();
-    }
 }
 
 void Viewer::animate() {
@@ -80,6 +77,9 @@ void Viewer::animate() {
     // this code might change if some rendered objets (stored as
     // attributes) need to be specifically updated with common
     // attributes, like real CPU time (?)
+    if (toogleRecord) {
+        saveSnapshot();
+    }
 }
 
 void Viewer::mouseMoveEvent(QMouseEvent *e) {

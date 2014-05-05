@@ -14,12 +14,14 @@ using namespace std;
 #include "human.h"
 #include "renderable.h"
 #include "terrain.h"
+#include "submarine.h"
 
 class DynamicSystem : public Renderable {
 private:
     
     Human* human;
     Terrain* terrain;
+    Submarine* submarine;
     
     vector<Fish *> fishes;
     vector< vector<Particle *> > bubbles;
@@ -33,10 +35,13 @@ private:
     double fishMass;
     Vec goal;
     Vec humanGoal;
+    Vec submarineGoal;
     int step;
 
     bool toggleGravity;
     bool toggleViscosity;
+    
+    bool toggleSubmarine;
 
     void clear();
     void collisionParticleGround(Particle *p);

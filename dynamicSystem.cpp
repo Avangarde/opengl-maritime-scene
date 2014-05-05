@@ -50,6 +50,13 @@ void DynamicSystem::init(Viewer& viewer) {
     fishes[0]->setPosition(Vec(10, 10, 10));
     goal = Vec(40, 40, 10);
     humanGoal = Vec(-80, -80, 10);
+    //Submarine
+    Vec pos = Vec(150, 50, 30);
+    Vec vel = Vec(-6, -2, 0);
+    Vec dir = Vec(-6, -2, 0);
+    submarine = new Submarine(pos, vel, dir, 50.0, 40.0, 60.0);
+    submarineGoal = Vec(-150, -50, 30);
+    toggleSubmarine = false;
 }
 
 void DynamicSystem::createBubbles(Vec origin, Vec vel, int maxBubbles, double maxRad) {
@@ -80,6 +87,10 @@ void DynamicSystem::draw() {
         }
     }
     glDisable(GL_BLEND);
+    
+    if (toggleSubmarine) {
+        submarine->draw();
+    }
 
 }
 
@@ -137,14 +148,17 @@ void DynamicSystem::animate() {
         goal[1] *= factor;
         humanGoal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         humanGoal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
-        humanGoal[2] = (terrain->size * (rand() / (float) RAND_MAX));
+        humanGoal[2] = ((terrain->size - 10) * (rand() / (float) RAND_MAX) + 10);
         humanGoal *= 0.70;
+        factor = ((terrain->size * 2) - humanGoal[2]) / (terrain->size * 2);
         humanGoal[0] *= factor;
         humanGoal[1] *= factor;
         step = 0;
     }
 
     animateBubbles();
+    human->getTube()->getParticles().back()->setPosition(human->getPosition());
+    human->getTube()->getParticles().back()->setVelocity(human->getVelocity());
 
     // Calcul de forces pour le tube
     vector<Particle *>::iterator itP2;
@@ -169,9 +183,6 @@ void DynamicSystem::animate() {
             p->incrPosition(dt * p->getVelocity());
             p->incrVelocity(dt * forcesTube[p] * p->getInvMass());
         }
-        if (i == human->getTube()->getParticles().size() - 1) {
-            human->getTube()->getParticles().back()->setPosition(human->getPosition());
-        }
     }
 
     // Collisions pour le tube
@@ -183,7 +194,12 @@ void DynamicSystem::animate() {
             //TODO changer la vitesse de l'humain
         }
     }
-
+    
+    if (toggleSubmarine) {
+        submarine->animate(dt, submarineGoal);
+        createBubbles(submarine->getPropPosition(), submarine->getVelocity()*-1, 10, 0.5);
+    }
+    
 }
 
 void DynamicSystem::animateBubbles() {
@@ -286,6 +302,14 @@ void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
         //viewer.manipulatedFrame()->setPosition(getFixedParticlePosition());
         toggleGravity = true;
         toggleViscosity = true;
+    } 
+    
+    else if ((e->key() == Qt::Key_U) && (modifiers == Qt::NoButton)) {
+        toggleSubmarine = !toggleSubmarine;
+        submarine->setPosition(Vec(120, 50, 30));
+        viewer.displayMessage("Placing Submarine "
+                + (toggleSubmarine ? QString("true") : QString("false")));
+
     }
 }
 
