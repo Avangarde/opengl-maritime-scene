@@ -104,8 +104,8 @@ void DynamicSystem::createSand(Vec origin, Vec vel, int maxSand) {
         Vec initPos = Vec(origin.x + posx, origin.y + posy, origin.z + 1 * ((double) rand() / RAND_MAX));
         Vec initPos2 = Vec(origin.x + posx, origin.y - posy, origin.z + 1 * ((double) rand() / RAND_MAX));
         Vec initVel = Vec(vel.x / 4, vel.y / 4, vel.z / 8 * ((double) rand() / RAND_MAX));
-        newSand.push_back(new Particle(initPos, initVel, 0.0, 0.1));
-        newSand.push_back(new Particle(initPos2, initVel, 0.0, 0.1));
+        newSand.push_back(new Particle(initPos, initVel, 0.0, 0.0));
+        newSand.push_back(new Particle(initPos2, initVel, 0.0, 0.0));
     }
     sand.push_back(newSand);
 }
@@ -121,7 +121,6 @@ void DynamicSystem::draw() {
     if (handleBubbles) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
         for (unsigned int i = 0; i < bubbles.size(); i++) {
             for (unsigned int j = 0; j < bubbles[i].size(); j++) {
                 bubbles[i][j]->draw();
@@ -324,7 +323,7 @@ void DynamicSystem::collisionParticleGround(Particle *p) {
     p->incrPosition(-penetration * groundNormal);
     p->incrVelocity(-2 * vPen * groundNormal);
 
-    if (handleSand)createSand(p->getPosition(), p->getVelocity(), 100);
+    if (handleSand)createSand(p->getPosition(), p->getVelocity(), 200);
 }
 
 void DynamicSystem::collisionLimits(Particle *p) {

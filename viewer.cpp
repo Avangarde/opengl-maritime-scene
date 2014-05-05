@@ -44,7 +44,7 @@ void Viewer::init() {
     toogleWireframe = false; // filled faces
     toogleLight = true; // light on
     toogleRecord = false;
-    //help();                   // display help
+    help();                   // display help
 
     if (toogleLight == true)
         glEnable(GL_LIGHTING);
@@ -145,6 +145,13 @@ QString Viewer::helpString() const {
     text += "A middle button double click fits the zoom of the camera and the right button re-centers the scene.<br><br>";
     text += "A left button double click while holding right button pressed defines the camera <i>Revolve Around Point</i>. ";
     text += "See the <b>Mouse</b> tab and the documentation web pages for details.<br><br>";
+    text += "Press <b>v</b> to set on/off the viscosity.<br>";
+    text += "Press <b>c</b> to set on/off the collisions.<br>";
+    text += "Press <b>k</b> to set on/off the caustics.<br>";
+    text += "Press <b>h</b> to show/hide the diver.<br>";
+    text += "Press <b>f</b> to show/hide some fishes.<br>";
+    text += "Press <b>b</b> to show/hide bubbles.<br>";
+    text += "Press <b>u</b> to show/hide an underwater surprise.<br>";
     text += "Press <b>Escape</b> to exit the viewer.";
     return text;
 }
