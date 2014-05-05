@@ -68,8 +68,9 @@ void DynamicSystem::init(Viewer& viewer) {
     handleSand = true;
     human->init(viewer);
     human->setPosition(Vec(0.0,0.0,10.0));
-    human->setVelocity(Vec(0.0,0.0,0.0));    
+    human->setVelocity(Vec(-1.0,-1.0,0.0));    
     human->getTube()->getParticles()[0]->setPosition(Vec(0.0, 0.0, HEIGHT_SCENE));
+    humanGoal = Vec(-80, -80, 10);
 
     for (int i = 0; i < 30; i++) {
         Vec initPos = Vec(((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*20);
@@ -80,7 +81,7 @@ void DynamicSystem::init(Viewer& viewer) {
     fishes[0]->setColour(Vec(1.0, 0.0, 0.0));
     fishes[0]->setPosition(Vec(10, 10, 10));
     goal = Vec(40, 40, 10);
-    humanGoal = Vec(-80, -80, 10);
+    
     //Submarine
     Vec pos = Vec(180, 60, 30);
     Vec vel = Vec(-6, -2, 0);
@@ -180,6 +181,7 @@ void DynamicSystem::animate() {
                 Fish *f = *itP;
                 collisionLimits(f);
                 collisionParticleGround(f);
+                collisionParticleHuman(f);
             }
         }
 
@@ -268,6 +270,9 @@ void DynamicSystem::animate() {
                 collisionParticleSubmarine(f);
             }
             collisionParticleSubmarine(human);
+            for (size_t i = 0; i < human->getTube()->getParticles().size(); i++) {
+                //collisionParticleSubmarine(human->getTube()->getParticles()[i]);
+            }
         }
     }
 
@@ -374,6 +379,15 @@ void DynamicSystem::collisionLimits(Particle *p) {
 void DynamicSystem::collisionParticleSubmarine(Particle* p) {
     if (submarine->distance(p) <= p->getRadius()) {        
         Vec dir = crossProduct(submarine->getDirection(), p->getVelocity());
+        dir.normalize();
+        p->incrVelocity(dir);
+        p->incrPosition(p->getVelocity() * dt);
+    }
+}
+
+void DynamicSystem::collisionParticleHuman(Particle* p) {
+    if (human->distance(p) <= p->getRadius()) {        
+        Vec dir = crossProduct(human->getDirection(), p->getVelocity());
         dir.normalize();
         p->incrVelocity(dir);
         p->incrPosition(p->getVelocity() * dt);

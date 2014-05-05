@@ -24,6 +24,10 @@ void Human::setTube(Tube* tube) {
     this->tube = tube;
 }
 
+const Vec & Human::getDirection() const {
+    return direction;
+}
+
 void Human::init(Viewer& viewer) {
     tube = new Tube(Vec(0.0,0.0,HEIGHT_SCENE));
     tube->init(viewer);
@@ -36,6 +40,7 @@ void Human::draw() {
     {
         //glRotatef(90, 1, 0, 0);
         glTranslatef(position.x, position.y, position.z);
+        glutSolidSphere(radius, 12,12);
         // Rotate to point in direction
         float xyLen = sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
         float zRot, xRot;
@@ -65,7 +70,7 @@ void Human::draw() {
 void Human::animate(float dt, Vec goal) {
     Vec dir = goal - position;
     normalize(dir);
-    //dir *= 1/dt;
+    dir *= 0.8;
     Vec oldVel = velocity;
     velocity += dir * dt;
     position += oldVel * dt;

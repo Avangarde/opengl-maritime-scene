@@ -43,6 +43,7 @@ public:
     float getScale() const;   
     Tube* getTube() const;
     void setTube(Tube* tube);
+    const Vec & getDirection() const;
 
 private:
     static const int PRECISION = 20;
