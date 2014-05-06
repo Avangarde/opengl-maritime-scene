@@ -45,6 +45,7 @@ protected:
 protected:
     bool toogleWireframe;
     bool toogleLight;
+    bool toggleFog;
     bool toogleRecord;
 
     /// Handle keyboard events specifically
