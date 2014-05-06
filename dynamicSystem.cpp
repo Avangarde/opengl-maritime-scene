@@ -18,6 +18,14 @@ void DynamicSystem::clear() {
         delete(*itP);
     }
     fishes.clear();
+    vector< vector<Particle *> >::iterator it1;
+    vector<Particle *>::iterator it2;
+    for (it1 = bubbles.begin(); it1 != bubbles.end(); ++it1) {
+        for (it2 = (*it1).begin(); it2 != (*it1).end(); ++it2) {
+            delete(*it2);
+        }
+    }
+    bubbles.clear();
 }
 
 void DynamicSystem::setGravity(bool onOff) {
@@ -201,7 +209,7 @@ void DynamicSystem::animate() {
     if (step == 50 && handleHuman) {
         createBubbles(human->getPosition(), human->getVelocity(), 20, 0.5);
     }
-    if (step == 100 && handleHuman) {
+    if (step == 100 && handleFishes) {
         goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[2] = (terrain->size * 1.5 * (rand() / (float) RAND_MAX));
@@ -209,11 +217,13 @@ void DynamicSystem::animate() {
         float factor = ((terrain->size * 2) - goal[2]) / (terrain->size * 2);
         goal[0] *= factor;
         goal[1] *= factor;
+    }
+    if (step == 100 && handleHuman) {
         humanGoal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         humanGoal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         humanGoal[2] = ((terrain->size - 10) * (rand() / (float) RAND_MAX) + 10);
         humanGoal *= 0.70;
-        factor = ((terrain->size * 2) - humanGoal[2]) / (terrain->size * 2);
+        float factor = ((terrain->size * 2) - humanGoal[2]) / (terrain->size * 2);
         humanGoal[0] *= factor;
         humanGoal[1] *= factor;
         step = 0;
@@ -344,7 +354,7 @@ void DynamicSystem::animateSand() {
     }
 }
 
-void DynamicSystem::collisionParticleGround(Particle *p) {
+void DynamicSystem::collisionParticleGround(Particle * p) {
     if (p->getInvMass() == 0)
         return;
     int xPos = (int) (p->getPosition().x / 4 + terrain->size / 2) % (int) terrain->size;
@@ -367,7 +377,7 @@ void DynamicSystem::collisionParticleGround(Particle *p) {
     if (handleSand)createSand(p->getPosition(), p->getVelocity(), 200);
 }
 
-void DynamicSystem::collisionLimits(Particle *p) {
+void DynamicSystem::collisionLimits(Particle * p) {
     int xPos = p->getPosition().x;
     int yPos = p->getPosition().y;
     int zPos = p->getPosition().z;
@@ -380,7 +390,7 @@ void DynamicSystem::collisionLimits(Particle *p) {
     }
 }
 
-void DynamicSystem::collisionParticleSubmarine(Particle* p) {
+void DynamicSystem::collisionParticleSubmarine(Particle * p) {
     if (submarine->distance(p) <= p->getRadius()) {
         Vec dir = crossProduct(submarine->getDirection(), p->getVelocity());
         dir.normalize();
@@ -389,7 +399,7 @@ void DynamicSystem::collisionParticleSubmarine(Particle* p) {
     }
 }
 
-void DynamicSystem::collisionParticleHuman(Particle* p) {
+void DynamicSystem::collisionParticleHuman(Particle * p) {
     if (human->distance(p) <= p->getRadius()) {
         Vec dir = crossProduct(human->getDirection(), p->getVelocity());
         dir.normalize();
@@ -404,7 +414,7 @@ void DynamicSystem::collisionTubeSubmarine(vector<Particle*> p) {
     bool col = false;
     for (size_t i = human->getTube()->getSprings().size() - 1; i > 0; i--) {
         double distance = submarine->distance(p[i]);
-        if (distance <= submarine->getRadius()) {
+        if (distance <= p[i]->getRadius()) {
             if (distance < min) {
                 idx = i;
             }
@@ -420,7 +430,7 @@ void DynamicSystem::collisionTubeSubmarine(vector<Particle*> p) {
     }
 }
 
-void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
+void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer & viewer) {
     // Get event modifiers key
     const Qt::KeyboardModifiers modifiers = e->modifiers();
 
@@ -491,6 +501,6 @@ void DynamicSystem::keyPressEvent(QKeyEvent* e, Viewer& viewer) {
     }
 }
 
-void DynamicSystem::mouseMoveEvent(QMouseEvent*, Viewer& v) {
+void DynamicSystem::mouseMoveEvent(QMouseEvent*, Viewer & v) {
     //human->getTube()->getParticles().back()->setPosition(v.manipulatedFrame()->position());
 }
