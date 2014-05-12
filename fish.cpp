@@ -5,7 +5,7 @@
 #define MAX_VELOCITY 20
 #define SWIM_ANGLE_DELTA_MAG 4
 #define SWIM_ANGLE_MAX 30
-#define FOV_RADIUS 3
+#define FOV_RADIUS 2*radius
 #define FOV_ANGLE 110 
 #define MAX_PRIORITY_CONTROL 1 
 
@@ -35,13 +35,17 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 
     goalSeekDir = globalGoal - position;
     normalize(goalSeekDir);
-    goalSeekDir *= 1/dt;
+//    goalSeekDir *= 1/dt;
 
     // Local Neighbourhood
 
     int numNeighbours = 0;
-    float smallestCloseNeighDist = radius;
+    float smallestCloseNeighDist = 2*radius;
     separationDir = Vec();
+    avgNeighbourVel = Vec();
+    avgNeighbourPos = Vec();
+    velMatchDir = Vec();
+    centeringDir = Vec();
 
     for (unsigned int i = 0; i < school.size(); i++) {
         if (schoolID != i) { // Don't influence yourself
@@ -56,8 +60,8 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
                 numNeighbours++;
 
                 // Work for Separation
-                if (neighbourDist < radius) {
-                    separationDir -= norm(neighbourDir) * pow(1 - (neighbourDist / radius), 2);
+                if (neighbourDist < 2*radius) {
+                    separationDir -= norm(neighbourDir) * pow(1 - (neighbourDist / 2*radius), 2);
                     if (neighbourDist < smallestCloseNeighDist) smallestCloseNeighDist = neighbourDist;
                 }
 
@@ -81,7 +85,7 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 
 
     if ((numNeighbours > 0)) {
-        separationPriority = pow(1 - (smallestCloseNeighDist / radius), 3);
+        separationPriority = pow(1 - (smallestCloseNeighDist / radius), 2);
         priorityControl += separationPriority;
     }
 
@@ -96,9 +100,9 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
 
         if (velMatchPriority + priorityControl > MAX_PRIORITY_CONTROL) {
             velMatchPriority = MAX_PRIORITY_CONTROL - priorityControl;
-            priorityControl = 0.01;
+            priorityControl = MAX_PRIORITY_CONTROL;
         } else {
-            priorityControl += centeringPriority;
+            priorityControl += velMatchPriority;
         }
     }
 
@@ -125,12 +129,13 @@ void Fish::animate(float dt, unsigned int schoolID, vector< Fish* > &school, Vec
                 (MAX_PRIORITY_CONTROL - priorityControl) * goalSeekDir;
     }
 
-//    if (magnitud(targetDir) > 1) targetDir *= (1 / magnitud(targetDir));
+    if (magnitud(targetDir) > 1) targetDir *= (1 / magnitud(targetDir));
+    targetDir *= 1/dt;
 
     // Arrival
     float modMax;
-    if (magnitud(lineToGoal) < radius) {
-        modMax = pow((magnitud(lineToGoal) / radius) * MAX_VELOCITY, 2);
+    if (magnitud(lineToGoal) < 2*radius) {
+        modMax = pow((magnitud(lineToGoal) / 2*radius) * MAX_VELOCITY, 2);
     } else {
         modMax = MAX_VELOCITY;
     }

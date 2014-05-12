@@ -153,8 +153,6 @@ void DynamicSystem::draw() {
             }
         }
     }
-    glDisable(GL_BLEND);
-
     if (toggleSubmarine) {
         submarine->draw();
     }
@@ -209,7 +207,8 @@ void DynamicSystem::animate() {
     if (step == 50 && handleHuman) {
         createBubbles(human->getPosition(), human->getVelocity(), 20, 0.5);
     }
-    if (step == 100 && handleFishes) {
+    int oldStep = step;
+    if (oldStep == 100 && handleFishes) {
         goal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         goal[2] = (terrain->size * 1.5 * (rand() / (float) RAND_MAX));
@@ -217,8 +216,9 @@ void DynamicSystem::animate() {
         float factor = ((terrain->size * 2) - goal[2]) / (terrain->size * 2);
         goal[0] *= factor;
         goal[1] *= factor;
+        step = 0;
     }
-    if (step == 100 && handleHuman) {
+    if (oldStep == 100 && handleHuman) {
         humanGoal[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         humanGoal[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
         humanGoal[2] = ((terrain->size - 10) * (rand() / (float) RAND_MAX) + 10);
