@@ -80,7 +80,7 @@ void DynamicSystem::init(Viewer& viewer) {
     human->getTube()->getParticles()[0]->setPosition(Vec(0.0, 0.0, HEIGHT_SCENE));
     humanGoal = Vec(-80, -80, 10);
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 50; i++) {
         Vec initPos = Vec(((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*20);
         Vec initVel = Vec(((double) rand() / RAND_MAX)*20 - 10, ((double) rand() / RAND_MAX)*20 - 10, ((double) rand() / RAND_MAX)*20 - 10);
         Vec initDir = initVel;
@@ -88,7 +88,17 @@ void DynamicSystem::init(Viewer& viewer) {
     }
     fishes[0]->setColour(Vec(1.0, 0.0, 0.0));
     fishes[0]->setPosition(Vec(10, 10, 10));
-    goal = Vec(40, 40, 10);
+    goal = Vec(80, 80, 10);
+    
+    for (int i = 0; i < 50; i++) {
+        Vec initPos = Vec(((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*40 - 20, ((double) rand() / RAND_MAX)*20+10);
+        Vec initVel = Vec(((double) rand() / RAND_MAX)*20 - 10, ((double) rand() / RAND_MAX)*20 - 10, ((double) rand() / RAND_MAX)*20 - 10);
+        Vec initDir = initVel;
+        fishes2.push_back(new Fish(initPos, initVel, initDir, fishMass, 2.0, 4.0));
+    }
+    fishes2[0]->setColour(Vec(1.0, 0.0, 0.0));
+    fishes2[0]->setPosition(Vec(10, 10, 10));
+    goal2 = Vec(-80, -80, 30);
 
     //Submarine
     Vec pos = Vec(180, 60, 30);
@@ -132,6 +142,9 @@ void DynamicSystem::draw() {
     if (handleFishes) {
         vector<Fish *>::iterator itP;
         for (itP = fishes.begin(); itP != fishes.end(); ++itP) {
+            (*itP)->draw();
+        }
+        for (itP = fishes2.begin(); itP != fishes2.end(); ++itP) {
             (*itP)->draw();
         }
     }
@@ -196,6 +209,37 @@ void DynamicSystem::animate() {
         for (unsigned int i = 1; i < fishes.size(); i++) {
             fishes[i]->animate(dt, i, fishes, goalSchool);
         }
+        // forces
+        for (itP = fishes2.begin(); itP != fishes2.end(); ++itP) {
+            Fish *f = *itP;
+            forces[f] = (-mediumViscosity * f->getVelocity()); /*+ gravity * f->getMass();*/
+        }
+
+        // update particles velocity
+        // update particles positions
+        for (itP = fishes2.begin(); itP != fishes2.end(); ++itP) {
+            Fish *f = *itP;
+            // v = v + dt * a
+            f->incrVelocity(dt * (forces[f] * f->getInvMass()));
+            // q = q + dt * v
+            f->incrPosition(dt * f->getVelocity());
+        }
+
+        //Collisions
+        if (handleCollisions) {
+            for (itP = fishes2.begin(); itP != fishes2.end(); ++itP) {
+                Fish *f = *itP;
+                collisionLimits(f);
+                collisionParticleGround(f);
+                collisionParticleHuman(f);
+            }
+        }
+
+        goalSchool = fishes2[0]->getPosition();
+        fishes2[0]->animate((float) dt, 0, fishes, goal2);
+        for (unsigned int i = 1; i < fishes2.size(); i++) {
+            fishes2[i]->animate(dt, i, fishes2, goalSchool);
+        }
     }
     if (handleHuman) {
         human->animate(dt, humanGoal);
@@ -216,6 +260,13 @@ void DynamicSystem::animate() {
         float factor = ((terrain->size * 2) - goal[2]) / (terrain->size * 2);
         goal[0] *= factor;
         goal[1] *= factor;
+        goal2[0] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
+        goal2[1] = (terrain->size * 4 * (rand() / (float) RAND_MAX)) - (terrain->size * 2);
+        goal2[2] = (terrain->size * 1.5 * (rand() / (float) RAND_MAX));
+        goal2 *= 0.95;
+        factor = ((terrain->size * 2) - goal2[2]) / (terrain->size * 2);
+        goal2[0] *= factor;
+        goal2[1] *= factor;
         step = 0;
     }
     if (oldStep == 100 && handleHuman) {

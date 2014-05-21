@@ -13,8 +13,8 @@
 #include <QGLViewer/qglviewer.h>
 #include <list>
 
-#define SIZE_TERRAIN 50
-#define HEIGHT_SCENE 95
+#define SIZE_TERRAIN 100
+#define HEIGHT_SCENE 180
 
 using namespace std;
 

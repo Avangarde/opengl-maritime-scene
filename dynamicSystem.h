@@ -24,6 +24,7 @@ private:
     Submarine* submarine;
     
     vector<Fish *> fishes;
+    vector<Fish *> fishes2;
     vector< vector<Particle *> > bubbles;
     vector< vector<Particle *> > sand;
 
@@ -35,6 +36,7 @@ private:
 
     double fishMass;
     Vec goal;
+    Vec goal2;
     Vec humanGoal;
     Vec submarineGoal;
     int step;
